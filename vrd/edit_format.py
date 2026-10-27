@@ -30,8 +30,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 # "@@ -12,6 +12,8 @@ import time" — the trailing section heading is optional and
-# almost always present in real git output.
-HUNK_RE = re.compile(r"^@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@")
+# almost always present in real git output. Group 1 is the old-side span.
+HUNK_RE = re.compile(r"^@@ -(\d+(?:,\d+)?) \+\d+(?:,\d+)? @@")
 
 FILE_HEADER = re.compile(r"^#{2,4}\s*(?:FILE|File|file):\s*`?([^`\n]+?)`?\s*$", re.M)
 BLOCK = re.compile(

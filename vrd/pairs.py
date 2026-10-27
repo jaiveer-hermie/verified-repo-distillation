@@ -24,7 +24,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from vrd.ingest import Commit, GitRepo, is_test_path, read_jsonl
-from vrd.edit_format import (INSTRUCTIONS as EDIT_INSTRUCTIONS,
+from vrd.edit_format import (HUNK_RE, INSTRUCTIONS as EDIT_INSTRUCTIONS,
                              INSTRUCTIONS_WHOLE, apply_edits, apply_whole,
                              diff_to_edits, parse_edits, parse_whole,
                              render_edits, render_whole)
@@ -40,8 +40,8 @@ from vrd.edit_format import (INSTRUCTIONS as EDIT_INSTRUCTIONS,
 #                     so it only works on small files.
 EDIT_FORMAT = os.getenv("VRD_EDIT_FORMAT", "diff").lower()
 
-MAX_CONTEXT_BYTES = 24_000        # hard cap on what arm A and arm C see
-MAX_FILE_BYTES = 8_000            # per-file cap; big files are truncated, not included whole
+MAX_CONTEXT_BYTES = int(os.getenv("VRD_MAX_CONTEXT", "48000"))  # what arm A/C see
+MAX_FILE_BYTES = int(os.getenv("VRD_MAX_FILE", "16000"))        # whole-file threshold
 TRIVIAL_LINE_DIFF = 3             # <= this many changed lines is noise, not a task
 
 # Binary assets cannot be a source edit; keeping them out of pairs and context
@@ -135,29 +135,100 @@ def _fence(path: str, body: str) -> str:
     return f"### {path}\n```\n{body}\n```\n"
 
 
-def build_context(tree_files: dict[str, str], test_names: list[str]) -> str:
-    """Assemble the minimal context. Both caps are enforced, always.
+def hunk_windows(patch: str) -> dict[str, list[tuple[int, int]]]:
+    """Per file, the (start, end) line ranges the patch touches at the parent."""
+    windows: dict[str, list[tuple[int, int]]] = {}
+    path = ""
+    for line in patch.splitlines():
+        if line.startswith("diff --git "):
+            path = ""
+            continue
+        if line.startswith("+++ "):
+            candidate = line[4:].strip()
+            path = candidate[2:] if candidate.startswith("b/") else candidate
+            continue
+        m = HUNK_RE.match(line)
+        if m and path:
+            span = m.group(1)
+            start = int(span.split(",")[0])
+            count = int(span.split(",")[1]) if "," in span else 1
+            windows.setdefault(path, []).append((start, start + max(count, 1) - 1))
+    return windows
 
-    An earlier version let the first file through whole "to keep something
-    complete", which produced 861KB prompts on a repo with large JS assets.
-    A budget with an exception is not a budget.
+
+def build_context(tree_files: dict[str, str], test_names: list[str],
+                  windows: dict[str, list[tuple[int, int]]] | None = None,
+                  pad: int = 60) -> str:
+    """Assemble the context, guaranteeing the editable region is visible.
+
+    These commits touch files with a median size of 521 KB, so truncating to a
+    per-file byte cap showed the model the first 8 KB of a 500 KB file and then
+    asked it to reproduce exact text it had never seen. Every arm scored ~0 for
+    that reason alone — a harness artifact, not a model property.
+
+    So: small files are included whole. Large files are shown as windows around
+    the lines the commit actually changes (the parent content there, which is
+    exactly what an edit must match), each labelled with its line range.
     """
     chunks: list[str] = []
     budget = MAX_CONTEXT_BYTES
     for path, body in tree_files.items():
         if budget <= 500:
             break
-        cap = min(MAX_FILE_BYTES, budget)
-        if len(body) > cap:
-            dropped = len(body) - cap
-            body = body[:cap] + f"\n... [truncated {dropped} bytes]"
-        piece = _fence(path, body)
-        chunks.append(piece)
-        budget -= len(piece)
+        if len(body) <= MAX_FILE_BYTES or not windows or path not in windows:
+            cap = min(MAX_FILE_BYTES, budget)
+            shown = body if len(body) <= cap else (
+                body[:cap] + f"\n... [truncated {len(body) - cap} bytes]")
+            piece = _fence(path, shown)
+            chunks.append(piece)
+            budget -= len(piece)
+            continue
+
+        lines = body.splitlines()
+        total = len(lines)
+        ranges: list[tuple[int, int]] = []
+        for start, end in sorted(windows[path]):
+            lo = max(1, start - pad)
+            hi = min(total, end + pad)
+            if ranges and lo <= ranges[-1][1] + 1:
+                ranges[-1] = (ranges[-1][0], max(ranges[-1][1], hi))
+            else:
+                ranges.append((lo, hi))
+
+        for lo, hi in ranges:
+            if budget <= 500:
+                break
+            excerpt = "\n".join(lines[lo - 1:hi])
+            header = f"### {path} (lines {lo}-{hi} of {total})\n"
+            cap = min(len(excerpt), budget - len(header) - 20)
+            if cap <= 0:
+                break
+            piece = header + "```\n" + excerpt[:cap] + ("\n```" if cap == len(excerpt) else
+                                                        "\n... [excerpt truncated]\n```")
+            chunks.append(piece)
+            budget -= len(piece) + 2
     if test_names:
         chunks.append("### Tests that cover this code\n" +
                       "\n".join(f"- {t}" for t in test_names) + "\n")
     return "".join(chunks)
+
+
+def edits_visible_in_context(patch: str, context: str) -> bool:
+    """Is every edit's SEARCH text present verbatim in the prompt?
+
+    Trailing whitespace is ignored on both sides (the applier is too), but the
+    lines themselves must be there: an edit whose anchor was truncated out of
+    the prompt is unanswerable, so scoring it measures nothing about the model.
+    """
+    def norm(text: str) -> str:
+        return "\n".join(line.rstrip() for line in text.splitlines())
+
+    ctx = norm(context)
+    for edit in diff_to_edits(patch):
+        search = norm(edit.search).strip()
+        if search and search not in ctx:
+            return False
+    return True
 
 
 def source_only_patch(patch: str) -> str:
@@ -201,6 +272,7 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
     pairs: list[Pair] = []
     skipped = 0
     not_expressible = 0
+    context_incomplete = 0
     for v in read_jsonl(verdicts_path):
         if v["status"] != "verified":
             continue
@@ -248,7 +320,16 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
         if not tree_files:
             continue
 
-        context = build_context(tree_files, test_names_touching(repo, parent, source_files))
+        context = build_context(tree_files, test_names_touching(repo, parent, source_files),
+                                windows=hunk_windows(patch))
+
+        # A pair is only fair if the text the answer must reproduce is actually
+        # in the prompt. Half of these commits touch ~500KB files, so this is
+        # the difference between "edit this code" and "guess text you were never
+        # shown". Unfair pairs are dropped, not scored.
+        if not edits_visible_in_context(patch, context):
+            context_incomplete += 1
+            continue
 
         # Whole-file answers require the whole file in context. A truncated
         # context plus a "return the entire file" contract is unwinnable, so
@@ -288,6 +369,9 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
     if not_expressible:
         print(f"pairs: dropped {not_expressible} whose patch cannot be written as "
               f"unique SEARCH/REPLACE blocks (ambiguous search text)")
+    if context_incomplete:
+        print(f"pairs: dropped {context_incomplete} whose editable lines were not "
+              f"visible in the prompt (unanswerable as posed)")
     write_pairs(pairs, out_path)
     return pairs
 
