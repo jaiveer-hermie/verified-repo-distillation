@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 
 from vrd.ingest import GitRepo, funnel, ingest, read_jsonl, write_jsonl
@@ -192,10 +193,31 @@ def cmd_eval(args: argparse.Namespace) -> int:
     cache_root = Path(args.cache)
     scratch_root = Path(args.scratch)
     results = {}
+
+    scores_path = Path(args.data) / "eval_scores.jsonl"
+    scores_fh = scores_path.open("w", encoding="utf-8")
+
+    def on_pair(arm: str, pair, score, gen) -> None:
+        verdict = "PASS" if score.success else ("apply" if score.applies else "fail")
+        print(f"  {arm} {pair.sha[:8]} {verdict:5s} "
+              f"{gen.latency_s:5.1f}s out={gen.content_chars:>6}c "
+              f"fin={gen.finish_reason or '-':<8} {(score.note or '')[:70]}",
+              flush=True)
+        scores_fh.write(json.dumps({
+            "arm": arm, "sha": pair.sha, "applies": score.applies,
+            "tests_pass": score.tests_pass, "success": score.success,
+            "generated_bytes": score.generated_bytes, "note": score.note,
+            "generation": (score.test_result or {}).get("generation", {}),
+            "test_counts": {k: (score.test_result or {}).get(k) for k in
+                            ("passed", "failed", "errors", "skipped")},
+        }) + "\n")
+        scores_fh.flush()
+
     for arm in [a.strip() for a in args.arms.split(",") if a.strip()]:
         print(f"arm {arm}: {len(pairs)} commits")
         results[arm] = run_arm(args.repo, pairs, arm, client, cache_root, scratch_root,
-                               model=args.model, preset=args.preset)
+                               model=args.model, preset=args.preset, progress=on_pair)
+    scores_fh.close()
     summary = summarise(results)
     out = Path(args.data) / "eval_report.json"
     write_report(summary, out, extra={"model": args.model, "n_pairs": len(pairs)})
@@ -226,6 +248,61 @@ def cmd_eval(args: argparse.Namespace) -> int:
             print(f"  - {n[:160]}")
     print(f"wrote {out}")
     print(f"wrote {scores_path}")
+    return 0
+
+
+def cmd_oracle(args: argparse.Namespace) -> int:
+    """Self-check: replay each pair's own gold answer through the scorer.
+
+    This is the test that makes every later number meaningful. The input is the
+    commit's verified patch rendered in the same contract the model must speak,
+    so it exercises parse -> apply -> run the commit's own tests -> score. If a
+    gold answer does not score as solved, the harness is wrong and no model
+    result can be trusted.
+    """
+    from vrd.evaluate import score_patch
+    from vrd.pairs import Pair
+
+    pairs_path = Path(args.data) / "pairs.jsonl"
+    if not pairs_path.exists():
+        print(f"missing {pairs_path} — run `pairs` first")
+        return 2
+    pairs = [Pair(**row) for row in read_jsonl(pairs_path)]
+    if args.time_split:
+        pairs = [p for p in pairs if p.commit_date >= args.time_split]
+    before = len(pairs)
+    pairs = [p for p in pairs
+             if len(p.changed_files) <= args.max_files
+             and len(p.patch) <= args.max_patch_bytes]
+    if args.limit:
+        pairs = pairs[: args.limit]
+    print(f"oracle: {before} pairs -> {len(pairs)} in scope "
+          f"(<= {args.max_files} files, <= {args.max_patch_bytes} patch bytes)")
+
+    repo = GitRepo(args.repo)
+    failures: list[tuple[str, str]] = []
+    for i, pair in enumerate(pairs, 1):
+        t0 = time.time()
+        score = score_patch(repo, pair, pair.to_target(),
+                            Path(args.cache), Path(args.scratch), args.preset)
+        elapsed = time.time() - t0
+        status = "OK  " if score.success else "FAIL"
+        print(f"  [{i}/{len(pairs)}] {status} {pair.sha[:8]} "
+              f"applies={int(score.applies)} pass={int(score.tests_pass)} "
+              f"{elapsed:5.1f}s {pair.subject[:44]}", flush=True)
+        if not score.success:
+            failures.append((pair.sha, score.note))
+
+    print()
+    n = len(pairs)
+    ok = n - len(failures)
+    print(f"oracle: {ok}/{n} gold answers scored as solved "
+          f"({(ok / n * 100) if n else 0:.0f}%)")
+    if failures:
+        print("harness defects (gold answer rejected):")
+        for sha, note in failures[:10]:
+            print(f"  {sha[:10]}  {note[:180]}")
+        return 1
     return 0
 
 
@@ -339,6 +416,18 @@ def main(argv: list[str] | None = None) -> int:
     p_eval.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))
     p_eval.add_argument("--scratch", default=str(Path.home() / ".cache/vrd/work"))
     p_eval.set_defaults(func=cmd_eval)
+
+    p_oracle = sub.add_parser("oracle", help="self-check: score each pair's own gold answer")
+    p_oracle.add_argument("--repo", required=True)
+    p_oracle.add_argument("--data", required=True)
+    p_oracle.add_argument("--limit", type=int, default=None)
+    p_oracle.add_argument("--max-files", type=int, default=2)
+    p_oracle.add_argument("--max-patch-bytes", type=int, default=6000)
+    p_oracle.add_argument("--time-split", default=None)
+    p_oracle.add_argument("--preset", default="hermes-webui")
+    p_oracle.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))
+    p_oracle.add_argument("--scratch", default=str(Path.home() / ".cache/vrd/work"))
+    p_oracle.set_defaults(func=cmd_oracle)
 
     p_report = sub.add_parser("report", help="aggregate funnel + verdicts for the demo page")
     p_report.add_argument("--data", required=True)

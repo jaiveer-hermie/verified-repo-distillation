@@ -457,7 +457,8 @@ def score_patch(repo: GitRepo, pair: Pair, model_output: str, cache_root: Path,
 def run_arm(repo_path: str | Path, pairs: list[Pair], arm: str, client: ChatClient,
             cache_root: Path, scratch_root: Path, model: str = DEFAULT_MODEL,
             limit: int | None = None, adapter: str | None = None,
-            preset: str | None = "hermes-webui") -> list[Score]:
+            preset: str | None = "hermes-webui",
+            progress=None) -> list[Score]:
     repo = GitRepo(repo_path)
     scores: list[Score] = []
     docs_cache: dict[str, BM25] = {}
@@ -502,6 +503,11 @@ def run_arm(repo_path: str | Path, pairs: list[Pair], arm: str, client: ChatClie
             "prompt_sha8": __import__("hashlib").sha256(prompt.encode()).hexdigest()[:8],
         }
         scores.append(score)
+        if progress is not None:
+            # Emit per pair: a silent 40-minute run is indistinguishable from a
+            # hung one, and an aggregate written only at the end is lost if the
+            # run dies.
+            progress(arm, pair, score, gen)
     return scores
 
 

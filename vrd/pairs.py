@@ -20,6 +20,7 @@ import json
 import os
 import re
 from dataclasses import dataclass, asdict, field
+from datetime import datetime, timezone
 from pathlib import Path
 
 from vrd.ingest import Commit, GitRepo, is_test_path, read_jsonl
@@ -48,6 +49,25 @@ TRIVIAL_LINE_DIFF = 3             # <= this many changed lines is noise, not a t
 BINARY_SUFFIXES = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf",
                    ".ttf", ".otf", ".woff", ".woff2", ".eot", ".zip", ".gz",
                    ".so", ".bin", ".mp3", ".mp4", ".webm", ".svgz")
+
+
+def to_utc_iso(ts: str) -> str:
+    """Normalise a git ISO timestamp to UTC.
+
+    Commits here carry offsets from -07:00 to +08:00. Comparing those strings
+    lexicographically compares local wall-clock times, so a "temporal" split
+    would put commits in the wrong side of the boundary by up to 15 hours.
+    """
+    ts = (ts or "").strip()
+    if not ts:
+        return ""
+    try:
+        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+    except ValueError:
+        return ts
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 def is_binary_path(path: str) -> bool:
@@ -166,6 +186,11 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
         parent = repo._git("rev-parse", f"{sha}^").strip()
         subject = v["subject"]
         message = repo._git("show", "-s", "--format=%B", sha).strip()
+        # The whole evaluation design rests on a temporal split, so the date has
+        # to be read from the commit itself. Verdict records do not carry it, and
+        # reading it from there left every pair with an empty date: no split.
+        commit_date = to_utc_iso(v.get("commit_date") or repo._git(
+            "show", "-s", "--format=%cI", sha).strip())
 
         # source files the commit touched, at the parent state
         changed = repo._git("show", "--name-only", "--format=", sha).split()
@@ -213,7 +238,7 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
         pairs.append(Pair(
             sha=sha,
             repo=repo.path.name,
-            commit_date=v.get("commit_date", ""),
+            commit_date=commit_date,
             subject=subject,
             message=message,
             changed_files=list(tree_files),

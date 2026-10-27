@@ -97,13 +97,18 @@ def _normalise(text: str) -> str:
     return "\n".join(line.rstrip() for line in text.splitlines())
 
 
-def apply_edits(tree: Path, edits: list[Edit], max_edits: int = 12,
-                max_block_lines: int = 80, max_total_lines: int = 300) -> tuple[bool, str]:
+def apply_edits(tree: Path, edits: list[Edit], max_edits: int = 20,
+                max_block_lines: int = 300, max_total_lines: int = 1200) -> tuple[bool, str]:
     """Apply edits in order. Returns (ok, note). All-or-nothing per block.
 
     Size limits are enforced here rather than requested in the prompt: a model
     asked to make a surgical change will happily rewrite four files wholesale,
     and a 222-block answer is not an edit, it is a refactor.
+
+    The limits are deliberately loose (300 lines/block, 1200 total). Tighter
+    limits rejected a real commit: the oracle test found a 92-line gold edit
+    block, which an 80-line cap scored as a model failure. The cap exists to
+    catch whole-file rewrites of large files, not to police honest edits.
     """
     if len(edits) > max_edits:
         return False, f"too many edits ({len(edits)} > {max_edits})"
