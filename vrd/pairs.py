@@ -120,20 +120,23 @@ def build_context(tree_files: dict[str, str], test_names: list[str]) -> str:
 
 
 def source_only_patch(patch: str) -> str:
-    """Strip test-file hunks out of the gold patch.
+    """Strip test-file and binary hunks out of the gold patch.
 
     The model is not being trained to write the tests — the tests are the
     verification instrument. If a hunk that edits tests reaches the training
     target, the corpus learns to satisfy the gate rather than the codebase.
+    Binary hunks (base85 blobs for PNGs and fonts) are dropped for the same
+    reason they are excluded from context: they are not a text edit, and they
+    made the corpus 28MB instead of 13MB.
     """
-    keep, current_is_test, out = [], False, []
+    out: list[str] = []
+    skip = False
     for line in patch.splitlines(keepends=True):
         if line.startswith("diff --git "):
-            current_is_test = " tests/" in line or "/tests/" in line
-        if not current_is_test:
+            path = line.split(" b/")[-1].strip()
+            skip = (" tests/" in line or "/tests/" in line or is_binary_path(path))
+        if not skip:
             out.append(line)
-        elif line.startswith("diff --git "):
-            continue
     return "".join(out)
 
 
@@ -198,12 +201,15 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
             skipped += 1
             continue
 
+        # Whole-file targets are large (a 100KB source file becomes a 100KB
+        # record), so only carry them when the whole contract is in use.
         target_files: dict[str, str] = {}
-        for path in source_files:
-            try:
-                target_files[path] = repo.show_file(sha, path)
-            except RuntimeError:
-                continue        # deleted by the commit; not expressible as whole-file
+        if EDIT_FORMAT == "whole":
+            for path in source_files:
+                try:
+                    target_files[path] = repo.show_file(sha, path)
+                except RuntimeError:
+                    continue    # deleted by the commit; not expressible as whole-file
 
         pairs.append(Pair(
             sha=sha,
