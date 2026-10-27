@@ -74,6 +74,27 @@ def is_binary_path(path: str) -> bool:
     return path.lower().endswith(BINARY_SUFFIXES)
 
 
+def edits_are_expressible(repo: GitRepo, parent: str, patch: str) -> bool:
+    """Can this patch be replayed as unique SEARCH/REPLACE blocks?
+
+    Checks each parsed edit's SEARCH text against the real file at the parent
+    commit: it must occur exactly once. An empty SEARCH (pure insertion) is
+    accepted, since there is nothing to disambiguate.
+    """
+    file_cache: dict[str, str] = {}
+    for edit in diff_to_edits(patch):
+        if not edit.search.strip():
+            continue
+        if edit.path not in file_cache:
+            try:
+                file_cache[edit.path] = repo.show_file(parent, edit.path)
+            except RuntimeError:
+                return False        # added by the commit: no SEARCH target
+        if file_cache[edit.path].count(edit.search) != 1:
+            return False
+    return True
+
+
 @dataclass
 class Pair:
     sha: str
@@ -179,6 +200,7 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
     repo = GitRepo(repo_path)
     pairs: list[Pair] = []
     skipped = 0
+    not_expressible = 0
     for v in read_jsonl(verdicts_path):
         if v["status"] != "verified":
             continue
@@ -205,6 +227,16 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
         lines = [l for l in patch.splitlines()
                  if (l.startswith("+") or l.startswith("-")) and not l.startswith(("+++", "---"))]
         if len(lines) <= TRIVIAL_LINE_DIFF:
+            continue
+
+        # The contract is SEARCH/REPLACE, which is position-free. A git hunk is
+        # position-anchored, so a hunk whose search text occurs twice in the file
+        # cannot be replayed: the gold answer itself would fail. Those commits
+        # are removed from the corpus instead of being scored as model failures
+        # (the oracle test found one; leaving it in would bias every arm down by
+        # the same amount).
+        if not edits_are_expressible(repo, parent, patch):
+            not_expressible += 1
             continue
 
         tree_files: dict[str, str] = {}
@@ -253,6 +285,9 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
     if skipped:
         print(f"pairs: skipped {skipped} whose files exceed the {MAX_CONTEXT_BYTES}B "
               f"context budget (whole-file contract needs the whole file)")
+    if not_expressible:
+        print(f"pairs: dropped {not_expressible} whose patch cannot be written as "
+              f"unique SEARCH/REPLACE blocks (ambiguous search text)")
     write_pairs(pairs, out_path)
     return pairs
 
