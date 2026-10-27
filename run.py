@@ -179,6 +179,64 @@ def cmd_eval(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_report(args: argparse.Namespace) -> int:
+    """Aggregate the funnel and gate verdicts into one JSON the demo page reads."""
+    from collections import Counter
+
+    data = Path(args.data)
+    verdicts_path = data / "verdicts.jsonl"
+    funnel_path = data / "funnel.json"
+    commits_path = data / "commits.jsonl"
+
+    verdicts = []
+    if verdicts_path.exists():
+        verdicts = [json.loads(l) for l in verdicts_path.read_text().splitlines() if l.strip()]
+
+    status = Counter(v["status"] for v in verdicts)
+    pre_fail = [v for v in verdicts if v["status"] == "verified"]
+    showcase = [v for v in verdicts if v["status"] == "reject_pre_passed"]
+
+    def counts(v, arm):
+        r = v.get(arm) or {}
+        return {"passed": r.get("passed", 0), "failed": r.get("failed", 0),
+                "errors": r.get("errors", 0), "skipped": r.get("skipped", 0),
+                "seconds": round(r.get("duration_s", 0), 2)}
+
+    report = {
+        "funnel": json.loads(funnel_path.read_text()) if funnel_path.exists() else {},
+        "gate": {
+            "ran": len(verdicts),
+            "status": dict(status),
+            "verified": status.get("verified", 0),
+            "mean_wall_s": round(sum(v.get("wall_s", 0) for v in verdicts) / len(verdicts), 1) if verdicts else 0,
+        },
+        "showcase_rejections": [
+            {
+                "sha": v["sha"], "subject": v["subject"],
+                "pre": counts(v, "pre"), "post": counts(v, "post"),
+                "test_files": v.get("test_files", []),
+            }
+            for v in showcase[:25]
+        ],
+        "verified_commits": [
+            {
+                "sha": v["sha"], "subject": v["subject"], "wall_s": round(v.get("wall_s", 0), 1),
+                "pre": counts(v, "pre"), "post": counts(v, "post"),
+                "test_files": v.get("test_files", []),
+            }
+            for v in pre_fail
+        ],
+    }
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(report, indent=2) + "\n")
+    print(f"gate ran        : {report['gate']['ran']}")
+    for k, n in status.most_common():
+        print(f"  {k:<20}{n:>5}")
+    print(f"wrote {out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="vrd", description=__doc__)
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -225,6 +283,11 @@ def main(argv: list[str] | None = None) -> int:
     p_eval.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))
     p_eval.add_argument("--scratch", default=str(Path.home() / ".cache/vrd/work"))
     p_eval.set_defaults(func=cmd_eval)
+
+    p_report = sub.add_parser("report", help="aggregate funnel + verdicts for the demo page")
+    p_report.add_argument("--data", required=True)
+    p_report.add_argument("--out", default="dashboard/report.json")
+    p_report.set_defaults(func=cmd_report)
 
     args = parser.parse_args(argv)
     if getattr(args, "preset", None) == "none":

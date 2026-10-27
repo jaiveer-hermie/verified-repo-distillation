@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verified Repo Distillation — gate funnel</title>
+<style>
+  :root {
+    --ink: #10131a;
+    --paper: #f5f3ee;
+    --rule: #d8d3c8;
+    --accent: #b8412e;
+    --green: #1f6f4a;
+    --muted: #6d6a63;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: var(--serif); font-size: 17px; line-height: 1.55;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 28px 96px; }
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 22px; margin-bottom: 42px; }
+  h1 { font-size: clamp(30px, 4.4vw, 46px); line-height: 1.08; margin: 0 0 12px; letter-spacing: -0.02em; }
+  .lede { font-size: 19px; color: var(--muted); max-width: 62ch; margin: 0; }
+  .kicker { font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+            text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+  h2 { font-size: 22px; margin: 52px 0 6px; letter-spacing: -0.01em; }
+  h2 + .sub { color: var(--muted); margin: 0 0 20px; font-size: 16px; max-width: 66ch; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+           gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 28px 0 8px; }
+  .stat { background: var(--paper); padding: 18px 16px; }
+  .stat b { display: block; font-family: var(--mono); font-size: 28px; letter-spacing: -0.03em; }
+  .stat span { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em;
+               text-transform: uppercase; color: var(--muted); }
+  .stat.hi b { color: var(--green); }
+  .stat.bad b { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; margin: 18px 0 8px; font-size: 15px; }
+  th { text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+       text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--ink);
+       padding: 8px 10px 8px 0; font-weight: 500; }
+  td { border-bottom: 1px solid var(--rule); padding: 10px 10px 10px 0; vertical-align: top; }
+  td.num, th.num { font-family: var(--mono); white-space: nowrap; }
+  .sha { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+  .tests { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .funnel-row { display: grid; grid-template-columns: 210px 1fr 64px; gap: 14px;
+                align-items: center; padding: 7px 0; }
+  .funnel-row .label { font-family: var(--mono); font-size: 12.5px; }
+  .bar { height: 20px; background: var(--ink); }
+  .bar.drop { background: var(--rule); }
+  .funnel-row .n { font-family: var(--mono); font-size: 13px; text-align: right; }
+  .note { font-size: 15px; color: var(--muted); border-left: 3px solid var(--accent);
+          padding-left: 16px; margin: 22px 0; max-width: 70ch; }
+  .pill { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+          text-transform: uppercase; padding: 2px 7px; border: 1px solid var(--rule); }
+  .pill.good { color: var(--green); border-color: var(--green); }
+  .pill.bad { color: var(--accent); border-color: var(--accent); }
+  footer { margin-top: 64px; border-top: 1px solid var(--rule); padding-top: 18px;
+           font-size: 13.5px; color: var(--muted); font-family: var(--mono); }
+  .empty { color: var(--muted); font-style: italic; }
+  @media (max-width: 620px) {
+    .funnel-row { grid-template-columns: 130px 1fr 48px; }
+    td:nth-child(3), th:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">Nebius × NVIDIA · Coding &amp; Agentic Engineering</p>
+    <h1>Verified Repo Distillation</h1>
+    <p class="lede">Every other “fine-tune on your codebase” tool mines git history and
+      assumes each commit was correct. This one runs the tests — and shows you the ones
+      that were never correct.</p>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <h2>The funnel</h2>
+  <p class="sub">Commits in, commits out, and why the rest died. Numbers below are produced
+    by <code>run.py ingest</code> and <code>run.py gate</code> on a real repository — no
+    hand-counting.</p>
+  <div id="funnel"></div>
+
+  <h2>Rejected: the test passed before the fix</h2>
+  <p class="sub">These commits add a test that does not test the commit. Injected against
+    the unpatched parent, it is already green. Any pipeline that mines history without
+    executing anything ingests these as ground truth.</p>
+  <div id="rejects"></div>
+
+  <h2>Verified pairs</h2>
+  <p class="sub">The injected test failed on the parent and passed after the patch. These
+    are the only commits that reach training.</p>
+  <div id="verified"></div>
+
+  <p class="note">Scoring in the evaluation is execution, never a judge: the produced diff
+    must apply to the parent tree <em>and</em> the commit’s own test must pass afterwards.</p>
+
+  <footer id="foot">report.json not loaded</footer>
+</div>
+
+<script>
+const fmt = n => (n === undefined || n === null) ? "—" : n.toLocaleString();
+
+fetch("report.json", { cache: "no-store" })
+  .then(r => { if (!r.ok) throw new Error("missing report.json"); return r.json(); })
+  .then(render)
+  .catch(err => {
+    document.getElementById("foot").textContent =
+      "report.json not loaded — run: python run.py report --data data/<repo>  (" + err.message + ")";
+  });
+
+function render(rep) {
+  const f = rep.funnel || {};
+  const g = rep.gate || {};
+  const st = g.status || {};
+  const verified = st.verified || 0;
+  const prePassed = st.reject_pre_passed || 0;
+  const ran = g.ran || 0;
+
+  document.getElementById("stats").innerHTML = [
+    ["commits walked", fmt(f.commits_total), ""],
+    ["kept after ingest", fmt(f.kept), ""],
+    ["gate candidates", fmt(f.gate_candidates), ""],
+    ["gate arms run", fmt(ran), ""],
+    ["verified", fmt(verified), "hi"],
+    ["false pairs caught", fmt(prePassed), "bad"],
+  ].map(([label, value, cls]) =>
+    `<div class="stat ${cls}"><b>${value}</b><span>${label}</span></div>`).join("");
+
+  const rows = [];
+  if (f.commits_total) {
+    rows.push(["commits walked", f.commits_total, "kept"]);
+    rows.push(["kept", f.kept, "kept"]);
+    rows.push(["gate candidates", f.gate_candidates, "kept"]);
+  }
+  const max = Math.max(f.commits_total || 1, 1);
+  const dropReasons = f.drop_reasons || {};
+  Object.keys(dropReasons).forEach(k => rows.push([k, dropReasons[k], "drop"]));
+
+  document.getElementById("funnel").innerHTML = rows.map(([label, n, kind]) => `
+    <div class="funnel-row">
+      <div class="label">${label}</div>
+      <div class="bar ${kind === "drop" ? "drop" : ""}" style="width:${Math.max(2, n / max * 100)}%"></div>
+      <div class="n">${fmt(n)}</div>
+    </div>`).join("") || '<p class="empty">no funnel data</p>';
+
+  const rejects = rep.showcase_rejections || [];
+  document.getElementById("rejects").innerHTML = rejects.length ? `
+    <table>
+      <thead><tr><th>Commit</th><th>Subject</th><th class="num">pre</th><th class="num">post</th></tr></thead>
+      <tbody>${rejects.map(r => `
+        <tr>
+          <td><span class="sha">${r.sha.slice(0, 10)}</span><div class="tests">${(r.test_files || []).map(t => t.split("/").pop()).join(", ")}</div></td>
+          <td>${r.subject}</td>
+          <td class="num">${r.pre.passed}p ${r.pre.failed}f</td>
+          <td class="num">${r.post.passed}p ${r.post.failed}f</td>
+        </tr>`).join("")}</tbody>
+    </table>` : '<p class="empty">no rejections in this run</p>';
+
+  const ver = rep.verified_commits || [];
+  document.getElementById("verified").innerHTML = ver.length ? `
+    <table>
+      <thead><tr><th>Commit</th><th>Subject</th><th class="num">pre → post</th><th class="num">sec</th></tr></thead>
+      <tbody>${ver.slice(0, 60).map(v => `
+        <tr>
+          <td><span class="sha">${v.sha.slice(0, 10)}</span><div class="tests">${(v.test_files || []).map(t => t.split("/").pop()).join(", ")}</div></td>
+          <td>${v.subject}</td>
+          <td class="num"><span class="pill bad">${v.pre.passed}p ${v.pre.failed}f</span> →
+              <span class="pill good">${v.post.passed}p ${v.post.failed}f</span></td>
+          <td class="num">${v.wall_s}</td>
+        </tr>`).join("")}</tbody>
+    </table>
+    ${ver.length > 60 ? `<p class="sub">showing 60 of ${ver.length}</p>` : ""}` :
+    '<p class="empty">no verified commits yet</p>';
+
+  document.getElementById("foot").textContent =
+    `gate: ${ran} commits · mean ${g.mean_wall_s}s per commit · ${verified} verified · ${prePassed} false pairs`;
+}
+</script>
+</body>
+</html>
