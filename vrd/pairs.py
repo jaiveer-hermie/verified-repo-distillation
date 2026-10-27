@@ -22,7 +22,7 @@ import re
 from dataclasses import dataclass, asdict, field
 from pathlib import Path
 
-from vrd.ingest import Commit, GitRepo, is_test_path
+from vrd.ingest import Commit, GitRepo, is_test_path, read_jsonl
 from vrd.edit_format import (INSTRUCTIONS as EDIT_INSTRUCTIONS,
                              INSTRUCTIONS_WHOLE, apply_edits, apply_whole,
                              diff_to_edits, parse_edits, parse_whole,
@@ -159,8 +159,7 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
     repo = GitRepo(repo_path)
     pairs: list[Pair] = []
     skipped = 0
-    for line in Path(verdicts_path).read_text().splitlines():
-        v = json.loads(line)
+    for v in read_jsonl(verdicts_path):
         if v["status"] != "verified":
             continue
         sha = v["sha"]
@@ -238,7 +237,9 @@ def write_pairs(pairs: list[Pair], path: str | Path) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fh:
         for p in pairs:
-            fh.write(json.dumps(asdict(p), ensure_ascii=False) + "\n")
+            # ensure_ascii=True keeps U+0085/U+2028 out of the raw file; see
+            # read_jsonl() in vrd.ingest for why that matters.
+            fh.write(json.dumps(asdict(p), ensure_ascii=True) + "\n")
     return path
 
 

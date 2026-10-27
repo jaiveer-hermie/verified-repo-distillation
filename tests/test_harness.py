@@ -23,7 +23,8 @@ import pytest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from vrd.evaluate import BM25, extract_diff, wilson_interval
-from vrd.ingest import Commit, FileChange, classify, funnel, mark_gate_candidate
+from vrd.ingest import (Commit, FileChange, classify, funnel, mark_gate_candidate,
+                        read_jsonl, write_rows, write_jsonl)
 from vrd.pairs import MAX_CONTEXT_BYTES, build_context, source_only_patch
 from vrd.replay import detect_toolchain, go_packages, parse_go_summary, parse_pytest_summary
 
@@ -237,3 +238,29 @@ def test_wilson_interval_is_bounded():
 
 def test_wilson_interval_zero_n():
     assert wilson_interval(0, 0) == (0.0, 0.0)
+
+
+# ── JSONL robustness ──────────────────────────────────────────────────────
+# A corpus line was silently truncated because json.dumps(ensure_ascii=False)
+# wrote a raw U+0085 (NEL) from a source file, and str.splitlines() treats that
+# as a line break. These pin the fix so it cannot come back.
+
+def test_jsonl_roundtrips_unicode_line_separator(tmp_path):
+    payload = [{"sha": "abc123", "context": "value = 1\u0085next = 2\u2028after = 3\n"}]
+    path = tmp_path / "rows.jsonl"
+
+    write_rows(payload, path)
+    rows = read_jsonl(path)
+
+    assert len(rows) == 1
+    assert "\u0085" in rows[0]["context"]
+    assert rows[0]["context"].startswith("value = 1")
+
+
+def test_jsonl_writer_escapes_separators(tmp_path):
+    path = tmp_path / "rows.jsonl"
+    write_rows([{"subject": "a\u0085b\u2028c"}], path)
+    raw = path.read_text(encoding="utf-8")
+
+    assert "\u0085" not in raw and "\u2028" not in raw
+    assert len(raw.splitlines()) == 1        # splitlines() now agrees with \n

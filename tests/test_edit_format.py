@@ -123,3 +123,81 @@ def test_roundtrip_survives_multiple_hunks():
     edits = diff_to_edits(patch)
     assert [e.search for e in edits] == ["a", "b"]
     assert [e.replace for e in edits] == ["A", "B"]
+
+
+# ── diff_to_edits: the real git output ────────────────────────────────────
+# Regression: the hunk-header check demanded a line ending in "@@", so every
+# hunk carrying a section heading was dropped and 176/483 training targets came
+# out empty. These use verbatim git output, headings included.
+
+GIT_PATCH = """diff --git a/api/clarify.py b/api/clarify.py
+index f6d16bb..f43d40d 100644
+--- a/api/clarify.py
++++ b/api/clarify.py
+@@ -12,6 +12,8 @@ import time
+ import uuid
+ from typing import Optional
+ 
++from api.session_events import publish_session_list_changed
++
+ 
+ DEFAULT_TIMEOUT_SECONDS = 120
+"""
+
+
+def test_diff_to_edits_keeps_hunks_with_section_headings():
+    edits = diff_to_edits(GIT_PATCH)
+    assert len(edits) == 1
+    assert edits[0].path == "api/clarify.py"
+    assert "publish_session_list_changed" in edits[0].replace
+    assert "publish_session_list_changed" not in edits[0].search
+
+
+def test_diff_to_edits_multi_file_multi_hunk():
+    patch = GIT_PATCH + """diff --git a/vrd/x.py b/vrd/x.py
+--- a/vrd/x.py
++++ b/vrd/x.py
+@@ -1,3 +1,3 @@
+ a = 1
+-b = 2
++b = 3
+ c = 4
+"""
+    edits = diff_to_edits(patch)
+    assert [e.path for e in edits] == ["api/clarify.py", "vrd/x.py"]
+
+
+def test_edits_reproduce_the_patch_exactly(tmp_path):
+    """The invariant that matters: edits applied == patch applied."""
+    original = """import time
+import uuid
+from typing import Optional
+
+
+DEFAULT_TIMEOUT_SECONDS = 120
+a = 1
+b = 2
+c = 4
+"""
+    (tmp_path / "m.py").write_text(original)
+
+    patch = """--- a/m.py
++++ b/m.py
+@@ -1,3 +1,4 @@
+ import time
+ import uuid
++import json
+ from typing import Optional
+@@ -6,3 +7,3 @@ DEFAULT_TIMEOUT_SECONDS = 120
+ a = 1
+-b = 2
++b = 3
+ c = 4
+"""
+    edits = diff_to_edits(patch)
+    assert len(edits) == 2
+    ok, note = apply_edits(tmp_path, edits)
+    assert ok, note
+
+    expected = original.replace("import uuid\n", "import uuid\nimport json\n").replace("b = 2", "b = 3")
+    assert (tmp_path / "m.py").read_text() == expected

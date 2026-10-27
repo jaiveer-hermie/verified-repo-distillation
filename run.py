@@ -14,7 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-from vrd.ingest import GitRepo, funnel, ingest, write_jsonl
+from vrd.ingest import GitRepo, funnel, ingest, read_jsonl, write_jsonl
 
 
 def cmd_ingest(args: argparse.Namespace) -> int:
@@ -60,13 +60,11 @@ def cmd_gate(args: argparse.Namespace) -> int:
         print(f"missing {cand_path} — run `ingest` first")
         return 2
     commits = []
-    for line in cand_path.read_text().splitlines():
-        row = json.loads(line)
+    for row in read_jsonl(cand_path):
         if args.retry:
             # never re-litigate a verification decision; only retry harness failures
-            keep = {r["sha"] for r in (
-                json.loads(l) for l in Path(args.retry).read_text().splitlines() if l.strip()
-            ) if r["status"] == "reject_replay"}
+            keep = {r["sha"] for r in read_jsonl(args.retry)
+                    if r["status"] == "reject_replay"}
             if row["sha"] not in keep:
                 continue
         files = [FileChange(path=f["path"], added=f["added"],
@@ -93,7 +91,7 @@ def cmd_gate(args: argparse.Namespace) -> int:
     )
     if args.retry and out_path.exists():
         # merge: replace only the retried shas, keep every prior decision intact
-        existing = [json.loads(l) for l in out_path.read_text().splitlines() if l.strip()]
+        existing = read_jsonl(out_path)
         new_by_sha = {v.sha: v for v in verdicts}
         merged = [new_by_sha.get(r["sha"], r) for r in existing] + [
             v for v in verdicts if v.sha not in {r["sha"] for r in existing}
@@ -147,7 +145,7 @@ def cmd_train(args: argparse.Namespace) -> int:
     if not pairs_path.exists():
         print(f"missing {pairs_path} — run `pairs` first")
         return 2
-    pairs = [Pair(**json.loads(line)) for line in pairs_path.read_text().splitlines() if line.strip()]
+    pairs = [Pair(**row) for row in read_jsonl(pairs_path)]
     out_dir = Path(args.out)
     card = export_dataset(pairs, out_dir, replay_dir=args.replay, time_split=args.time_split)
     spec = qlora_job_spec(str(out_dir / "train.jsonl"), str(out_dir / "adapter"))
@@ -170,7 +168,7 @@ def cmd_eval(args: argparse.Namespace) -> int:
     if not pairs_path.exists():
         print(f"missing {pairs_path} — run `pairs` first")
         return 2
-    pairs = [Pair(**json.loads(line)) for line in pairs_path.read_text().splitlines() if line.strip()]
+    pairs = [Pair(**row) for row in read_jsonl(pairs_path)]
     if args.time_split:
         pairs = [p for p in pairs if p.commit_date >= args.time_split]
 
@@ -242,7 +240,7 @@ def cmd_report(args: argparse.Namespace) -> int:
 
     verdicts = []
     if verdicts_path.exists():
-        verdicts = [json.loads(l) for l in verdicts_path.read_text().splitlines() if l.strip()]
+        verdicts = read_jsonl(verdicts_path)
 
     status = Counter(v["status"] for v in verdicts)
     pre_fail = [v for v in verdicts if v["status"] == "verified"]

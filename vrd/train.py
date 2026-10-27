@@ -24,6 +24,7 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 
 from vrd.pairs import Pair
+from vrd.ingest import read_jsonl
 
 SYSTEM = (
     "You are a repository editing agent. You are given the current contents of the "
@@ -80,7 +81,7 @@ def load_replay_examples(cache_dir: str | Path | None = None) -> list[dict]:
     path = Path(cache_dir) / "replay.jsonl"
     if not path.exists():
         return []
-    return [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    return read_jsonl(path)
 
 
 def export_dataset(pairs: list[Pair], out_dir: str | Path,

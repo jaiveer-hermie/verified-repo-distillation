@@ -269,18 +269,45 @@ def funnel(commits: list[Commit]) -> dict:
     }
 
 
-def write_jsonl(commits: list[Commit], path: str | Path) -> Path:
+def write_rows(rows: list[dict], path: str | Path) -> Path:
+    """Write JSONL with separators escaped. See the ensure_ascii note below."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as fh:
-        for c in commits:
-            row = asdict(c)
-            row["insertions"] = c.insertions
-            row["deletions"] = c.deletions
-            row["added_tests"] = c.added_tests
-            row["source_paths"] = c.source_paths
-            fh.write(json.dumps(row, ensure_ascii=False) + "\n")
+        for row in rows:
+            fh.write(json.dumps(row, ensure_ascii=True) + "\n")
     return path
+
+
+def write_jsonl(commits: list[Commit], path: str | Path) -> Path:
+    rows: list[dict] = []
+    for c in commits:
+        row = asdict(c)
+        row["insertions"] = c.insertions
+        row["deletions"] = c.deletions
+        row["added_tests"] = c.added_tests
+        row["source_paths"] = c.source_paths
+        rows.append(row)
+    # ensure_ascii=True: JSON permits raw U+0085/U+2028/U+2029 inside strings,
+    # but str.splitlines() treats them as line breaks. A source file containing
+    # one silently truncated a corpus line at 25,912 chars and broke every
+    # reader that used splitlines(). Escaping on write fixes it once, globally.
+    return write_rows(rows, path)
+
+
+def read_jsonl(path: str | Path) -> list[dict]:
+    """Read JSONL by iterating the file handle.
+
+    File iteration splits only on "\\n". str.splitlines() also splits on
+    U+0085/U+2028/U+2029/VT/FF, which are legal *inside* a JSON string.
+    """
+    rows: list[dict] = []
+    with Path(path).open(encoding="utf-8") as fh:
+        for line in fh:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
 
 
 # ── Convenience properties used by later stages ────────────────────────────
