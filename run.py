@@ -62,6 +62,13 @@ def cmd_gate(args: argparse.Namespace) -> int:
     commits = []
     for line in cand_path.read_text().splitlines():
         row = json.loads(line)
+        if args.retry:
+            # never re-litigate a verification decision; only retry harness failures
+            keep = {r["sha"] for r in (
+                json.loads(l) for l in Path(args.retry).read_text().splitlines() if l.strip()
+            ) if r["status"] == "reject_replay"}
+            if row["sha"] not in keep:
+                continue
         files = [FileChange(path=f["path"], added=f["added"],
                             deleted=f["deleted"], status=f["status"])
                  for f in row.get("files", [])]
@@ -84,7 +91,19 @@ def cmd_gate(args: argparse.Namespace) -> int:
         args.repo, commits, cache_root=args.cache, scratch_root=args.scratch,
         preset=args.preset, limit=args.limit, progress=progress,
     )
-    write_verdicts(verdicts, out_path)
+    if args.retry and out_path.exists():
+        # merge: replace only the retried shas, keep every prior decision intact
+        existing = [json.loads(l) for l in out_path.read_text().splitlines() if l.strip()]
+        new_by_sha = {v.sha: v for v in verdicts}
+        merged = [new_by_sha.get(r["sha"], r) for r in existing] + [
+            v for v in verdicts if v.sha not in {r["sha"] for r in existing}
+        ]
+        from dataclasses import asdict as _asdict
+        with out_path.open("w", encoding="utf-8") as fh:
+            for row in merged:
+                fh.write(json.dumps(row if isinstance(row, dict) else _asdict(row)) + "\n")
+    else:
+        write_verdicts(verdicts, out_path)
 
     from collections import Counter
     counts = Counter(v.status for v in verdicts)
@@ -152,10 +171,20 @@ def cmd_eval(args: argparse.Namespace) -> int:
         print(f"missing {pairs_path} — run `pairs` first")
         return 2
     pairs = [Pair(**json.loads(line)) for line in pairs_path.read_text().splitlines() if line.strip()]
-    if args.limit:
-        pairs = pairs[: args.limit]
     if args.time_split:
         pairs = [p for p in pairs if p.commit_date >= args.time_split]
+
+    # Scope filter. A 4-file, 20KB commit is not a fair task for a 30-120B model,
+    # and scoring it produces a number about model size rather than about tuning.
+    # Restrict to small, few-file commits and say so in the report.
+    before = len(pairs)
+    pairs = [p for p in pairs
+             if len(p.changed_files) <= args.max_files
+             and len(p.patch) <= args.max_patch_bytes]
+    if args.limit:
+        pairs = pairs[: args.limit]
+    print(f"pairs: {before} total -> {len(pairs)} within scope "
+          f"(<= {args.max_files} files, <= {args.max_patch_bytes} patch bytes)")
 
     client = ChatClient()
     if client.dry_run:
@@ -172,10 +201,33 @@ def cmd_eval(args: argparse.Namespace) -> int:
     summary = summarise(results)
     out = Path(args.data) / "eval_report.json"
     write_report(summary, out, extra={"model": args.model, "n_pairs": len(pairs)})
+
+    # Per-pair records: an aggregate can hide that every failure was the same
+    # harness artefact (diff did not apply) rather than a model failure.
+    scores_path = Path(args.data) / "eval_scores.jsonl"
+    with scores_path.open("w", encoding="utf-8") as fh:
+        for arm, arm_scores in results.items():
+            for s in arm_scores:
+                row = {
+                    "arm": arm, "sha": s.sha, "applies": s.applies,
+                    "tests_pass": s.tests_pass, "success": s.success,
+                    "generated_bytes": s.generated_bytes, "note": s.note,
+                    "generation": (s.test_result or {}).get("generation", {}),
+                    "test_counts": {k: (s.test_result or {}).get(k) for k in
+                                    ("passed", "failed", "errors", "skipped")},
+                }
+                fh.write(json.dumps(row) + "\n")
+
     print()
     print(markdown_table(summary))
     print()
+    notes = [s.note for arm_scores in results.values() for s in arm_scores if s.note]
+    if notes:
+        print("first failure notes:")
+        for n in notes[:3]:
+            print(f"  - {n[:160]}")
     print(f"wrote {out}")
+    print(f"wrote {scores_path}")
     return 0
 
 
@@ -257,6 +309,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="env preset from vrd.replay.ENV_PRESETS, or 'none'")
     p_gate.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))
     p_gate.add_argument("--scratch", default=str(Path.home() / ".cache/vrd/work"))
+    p_gate.add_argument("--retry", default=None,
+                        help="path to an existing verdicts.jsonl; only retry reject_replay entries")
     p_gate.set_defaults(func=cmd_gate)
 
     p_pairs = sub.add_parser("pairs", help="stage 4: build training pairs")
@@ -278,6 +332,10 @@ def main(argv: list[str] | None = None) -> int:
     p_eval.add_argument("--arms", default="A,B,C")
     p_eval.add_argument("--model", default=None)
     p_eval.add_argument("--limit", type=int, default=None)
+    p_eval.add_argument("--max-files", type=int, default=2,
+                        help="keep pairs touching at most this many source files")
+    p_eval.add_argument("--max-patch-bytes", type=int, default=6000,
+                        help="keep pairs whose gold patch is at most this large")
     p_eval.add_argument("--time-split", default=None)
     p_eval.add_argument("--preset", default="hermes-webui")
     p_eval.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))

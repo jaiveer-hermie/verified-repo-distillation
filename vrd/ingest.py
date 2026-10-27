@@ -111,6 +111,7 @@ class GitRepo:
             ["git", "-C", str(self.path), *args],
             capture_output=True,
             text=True,
+            errors="replace",   # commits touch PNG/TTF assets; never explode on bytes
             check=False,
         )
         if proc.returncode != 0:
@@ -181,7 +182,10 @@ class GitRepo:
         return out
 
     def patch(self, sha: str) -> str:
-        return self._git("show", "--format=", "--patch", sha)
+        # --binary and --full-index are required: without them any commit that
+        # touches a PNG or a font produces an unappliable patch, and the gate
+        # records a harness failure as if the commit were unusable.
+        return self._git("show", "--format=", "--patch", "--binary", "--full-index", sha)
 
     def show_file(self, sha: str, path: str) -> str:
         return self._git("show", f"{sha}:{path}")

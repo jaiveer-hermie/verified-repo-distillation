@@ -27,8 +27,9 @@ from vrd.pairs import Pair
 
 SYSTEM = (
     "You are a repository editing agent. You are given the current contents of the "
-    "files you may change and a request. Reply with a unified diff only. Never "
-    "rewrite a file wholesale when a surgical hunk will do, and never modify tests."
+    "files you may change and a request. Reply with search/replace blocks in the "
+    "exact format requested. Never rewrite a file wholesale when a small block will "
+    "do, and never modify tests."
 )
 
 
@@ -56,7 +57,7 @@ def to_chat_example(pair: Pair) -> dict:
         "messages": [
             {"role": "system", "content": SYSTEM},
             {"role": "user", "content": pair.to_prompt()},
-            {"role": "assistant", "content": pair.patch},
+            {"role": "assistant", "content": pair.to_target()},
         ],
         "meta": {
             "sha": pair.sha,
