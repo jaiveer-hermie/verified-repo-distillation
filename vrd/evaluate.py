@@ -139,7 +139,10 @@ class ChatClient:
         candidates = ((env_file,) if env_file else ()) + ENV_FILE_CANDIDATES
         key_name = PROVIDER_KEY_NAMES.get(self.provider, "OPENROUTER_API_KEY")
         self.api_key, self.key_source = (api_key, "argument") if api_key else read_env_key(key_name, candidates)
-        self.url = url or PROVIDER_URLS.get(self.provider, OPENROUTER_URL)
+        # VRD_BASE_URL lets the harness point at a dedicated endpoint's regional
+        # data plane (https://api.tokenfactory.<region>.nebius.com/v1), which is
+        # how the tuned model gets scored once its weights are deployable.
+        self.url = url or os.getenv("VRD_BASE_URL") or PROVIDER_URLS.get(self.provider, OPENROUTER_URL)
         self.dry_run = os.getenv("VRD_DRY_RUN") == "1" or not self.api_key
 
     def complete(self, prompt: str, model: str = DEFAULT_MODEL, arm: str = "A",
