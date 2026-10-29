@@ -216,7 +216,8 @@ def cmd_eval(args: argparse.Namespace) -> int:
     for arm in [a.strip() for a in args.arms.split(",") if a.strip()]:
         print(f"arm {arm}: {len(pairs)} commits")
         results[arm] = run_arm(args.repo, pairs, arm, client, cache_root, scratch_root,
-                               model=args.model, preset=args.preset, progress=on_pair)
+                               model=args.model, preset=args.preset, progress=on_pair,
+                               max_attempts=getattr(args, "attempts", 1))
     scores_fh.close()
     summary = summarise(results)
     out = Path(args.data) / "eval_report.json"
@@ -411,6 +412,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="keep pairs touching at most this many source files")
     p_eval.add_argument("--max-patch-bytes", type=int, default=6000,
                         help="keep pairs whose gold patch is at most this large")
+    p_eval.add_argument("--attempts", type=int, default=1,
+                        help="attempts per pair; >1 feeds the test failure back "
+                             "and asks for a corrected patch (pass@k)")
     p_eval.add_argument("--time-split", default=None)
     p_eval.add_argument("--preset", default="hermes-webui")
     p_eval.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))

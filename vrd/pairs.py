@@ -43,6 +43,7 @@ EDIT_FORMAT = os.getenv("VRD_EDIT_FORMAT", "diff").lower()
 MAX_CONTEXT_BYTES = int(os.getenv("VRD_MAX_CONTEXT", "48000"))  # what arm A/C see
 MAX_FILE_BYTES = int(os.getenv("VRD_MAX_FILE", "16000"))        # whole-file threshold
 TRIVIAL_LINE_DIFF = 3             # <= this many changed lines is noise, not a task
+MAX_TEST_CONTEXT_BYTES = 12_000   # budget for the failing tests shown as the spec
 
 # Binary assets cannot be a source edit; keeping them out of pairs and context
 # avoids both decode errors and nonsense diffs.
@@ -72,6 +73,21 @@ def to_utc_iso(ts: str) -> str:
 
 def is_binary_path(path: str) -> bool:
     return path.lower().endswith(BINARY_SUFFIXES)
+
+
+# Only code counts as a source file. Without this, a commit that touches both
+# code and CHANGELOG.md yields pairs whose "edit" is a changelog line — the
+# contamination probe surfaced exactly that. Docs are not the skill being
+# measured.
+CODE_SUFFIXES = (
+    ".py", ".js", ".mjs", ".cjs", ".jsx", ".ts", ".tsx", ".go", ".rs",
+    ".java", ".kt", ".c", ".h", ".cc", ".cpp", ".hpp", ".cs", ".rb", ".php",
+    ".sh", ".bash", ".css", ".scss", ".html", ".sql", ".swift", ".lua", ".pl",
+)
+
+
+def is_code_path(path: str) -> bool:
+    return path.lower().endswith(CODE_SUFFIXES)
 
 
 def edits_are_expressible(repo: GitRepo, parent: str, patch: str) -> bool:
@@ -105,18 +121,29 @@ class Pair:
     changed_files: list[str]
     context: str                  # what arm A and arm C see
     patch: str                    # gold unified diff, source files only
-    test_files: list[str]         # the verification tests (held out from context)
+    test_files: list[str]         # the verification tests (held out of the target)
+    test_context: str = ""        # the failing tests themselves, as the specification
     source_files: list[str] = field(default_factory=list)
     target_files: dict[str, str] = field(default_factory=dict)  # post-commit contents
 
     def to_prompt(self) -> str:
         instructions = INSTRUCTIONS_WHOLE if EDIT_FORMAT == "whole" else EDIT_INSTRUCTIONS
+        tests = ""
+        if self.test_context:
+            tests = (
+                "## Tests that must pass\n"
+                "These are the tests the change has to make pass. They are the "
+                "specification: do not modify them, and do not assume any other "
+                "behaviour than what they assert.\n"
+                f"{self.test_context}\n\n"
+            )
         return (
             "You are editing an existing repository. Apply the smallest change that "
             "implements the request below.\n\n"
             f"## Request\n{self.subject}\n\n"
             f"## Files\n" + "\n".join(f"- {p}" for p in self.changed_files) + "\n\n"
             f"## Current contents\n{self.context}\n\n"
+            + tests
             + instructions
         )
 
@@ -289,7 +316,8 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
         # source files the commit touched, at the parent state
         changed = repo._git("show", "--name-only", "--format=", sha).split()
         source_files = [p for p in changed
-                        if not is_test_path(p) and not is_binary_path(p)]
+                        if not is_test_path(p) and not is_binary_path(p)
+                        and is_code_path(p)]
         if len(source_files) > 8 or not source_files:
             continue
 
@@ -322,6 +350,23 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
 
         context = build_context(tree_files, test_names_touching(repo, parent, source_files),
                                 windows=hunk_windows(patch))
+
+        # The tests are the specification. Without them the model is guessing
+        # intended behaviour from a commit subject, which is why early runs
+        # produced patches that applied but could never satisfy the test.
+        test_chunks: list[str] = []
+        test_budget = MAX_TEST_CONTEXT_BYTES
+        for test_path in v["test_files"]:
+            if test_budget <= 200:
+                break
+            try:
+                body = repo.show_file(sha, test_path)
+            except RuntimeError:
+                continue
+            body = body[:test_budget]
+            test_chunks.append(_fence(test_path, body))
+            test_budget -= len(body) + len(test_path) + 16
+        test_context = "".join(test_chunks)
 
         # A pair is only fair if the text the answer must reproduce is actually
         # in the prompt. Half of these commits touch ~500KB files, so this is
@@ -358,6 +403,7 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
             context=context,
             patch=patch,
             test_files=v["test_files"],
+            test_context=test_context,
             source_files=source_files,
             target_files=target_files,
         ))

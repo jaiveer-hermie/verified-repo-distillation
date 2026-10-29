@@ -60,14 +60,16 @@ model failures:
 
 | property | value | why it matters |
 |---|---|---|
-| pairs | 460 | survivors of gate + expressibility filters |
-| ≤2 source files | 235 | scope of the eval; larger commits measure model size |
-| median context | 16.9 KB | fits comfortably in any context window |
-| median patch | 5.9 KB | ~1500 tokens of answer |
+| pairs | 182 | code-only, after gate + fairness filters |
+| ≤2 source files | 106 | scope of the eval; larger commits measure model size |
+| median context | 14.2 KB | fits comfortably in any context window |
+| median patch | 4.7 KB | ~1200 tokens of answer |
 | empty targets | **0** | see below |
 | test hunks in targets | 0 | tests are the instrument, never the target |
 | binary blobs in targets | 0 | base85 PNG/TTF payloads are not text edits |
-| duplicate/unexpressible | 23 dropped | unplayable in the contract |
+| duplicate/unexpressible | 24 dropped | unplayable in the contract |
+| unanswerable (anchors not in prompt) | 285 dropped | see §4 |
+| non-code files (docs/changelogs) | **0** | they were previously treated as source |
 
 Three corpus defects were found and fixed **before** any number was quoted:
 
@@ -91,11 +93,11 @@ The claim "held-out commits" requires an actual time boundary.
 - Now read from the commit as `%cI` and **normalised to UTC**. This repo's
   commits span `-07:00` to `+08:00`; comparing those strings lexicographically
   compares local wall-clock time and misplaces commits by up to 15 hours.
-- Split at the 80th percentile: **2026-05-19T01:38:13Z** → 367 train /
-  93 held out / 43 held out and in scope.
+- Split at the 80th percentile: **2026-05-19T01:38:13Z** → **148 train /
+  34 held out / 26 held out and in scope**.
 
-The tuned arm may only see the 367. Every reported arm number is computed on the
-43.
+The tuned arm may only see the 148. Every reported arm number is computed on the
+26.
 
 ## 5. The scorer never asks a model to judge
 

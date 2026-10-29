@@ -201,3 +201,53 @@ c = 4
 
     expected = original.replace("import uuid\n", "import uuid\nimport json\n").replace("b = 2", "b = 3")
     assert (tmp_path / "m.py").read_text() == expected
+
+
+# ── fuzzy anchor matching ─────────────────────────────────────────────────
+# Aider matches blocks fuzzily because models reproduce anchors imperfectly.
+# The tests still decide correctness; this only measures whether the edit
+# landed, not whether the model can copy bytes.
+
+def _tree(tmp_path, name, body):
+    (tmp_path / name).write_text(body)
+    return tmp_path
+
+
+def test_whitespace_only_difference_still_applies(tmp_path):
+    body = "def f():\n    x = 1\n    return x\n"
+    tree = _tree(tmp_path, "a.py", body)
+    edit = Edit(path="a.py", search="def f():\n  x = 1\n  return x", replace="def f():\n  x = 2\n  return x")
+    ok, note = apply_edits(tree, [edit])
+    assert ok, note
+    assert "x = 2" in (tree / "a.py").read_text()
+
+
+def test_near_miss_line_applies_at_best_position(tmp_path):
+    body = ("import os\n\n\nclass A:\n    def run(self):\n"
+            "        value = compute(alpha, beta)\n        return value\n")
+    tree = _tree(tmp_path, "b.py", body)
+    # one character differs in the anchor (compute -> comput)
+    edit = Edit(path="b.py",
+                search="    def run(self):\n        value = comput(alpha, beta)\n        return value",
+                replace="    def run(self):\n        value = compute(alpha, beta, 1)\n        return value")
+    ok, note = apply_edits(tree, [edit])
+    assert ok, note
+    assert "compute(alpha, beta, 1)" in (tree / "b.py").read_text()
+
+
+def test_ambiguous_anchor_is_refused_not_guessed(tmp_path):
+    body = "x = 1\ny = 2\n" * 3
+    tree = _tree(tmp_path, "c.py", body)
+    edit = Edit(path="c.py", search="x = 1\ny = 2", replace="x = 9\ny = 2")
+    ok, note = apply_edits(tree, [edit])
+    assert not ok
+    assert "matches" in note or "not found" in note
+
+
+def test_unrelated_anchor_is_reported_not_applied(tmp_path):
+    tree = _tree(tmp_path, "d.py", "def f():\n    return 1\n")
+    edit = Edit(path="d.py", search="class Completely:\n    different = True",
+                replace="class Completely:\n    different = False")
+    ok, note = apply_edits(tree, [edit])
+    assert not ok
+    assert "not found" in note

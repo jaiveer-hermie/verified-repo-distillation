@@ -24,6 +24,7 @@ evaluator expects — train and eval must share one contract.
 
 from __future__ import annotations
 
+import difflib
 import re
 import subprocess
 from dataclasses import dataclass
@@ -42,16 +43,23 @@ BLOCK = re.compile(
 INSTRUCTIONS = (
     "## Output format\n"
     "Reply with search/replace blocks only. No prose, no fences, no commentary.\n"
-    "For each file you change, write a header line then one or more blocks:\n\n"
-    "### FILE: <path>\n"
+    "For each file you change, write a header line then one or more blocks.\n"
+    "This is a filled-in example — copy its shape exactly, with your own paths\n"
+    "and lines (never output the words EXAMPLE, here, or any <angle-bracket>\n"
+    "placeholder: they must be replaced with real values from the context):\n\n"
+    "### FILE: static/sessions.js\n"
     "<<<<<<< SEARCH\n"
-    "<lines that exist in the file now, indented exactly as they are>\n"
+    "  function refreshSidebar() {\n"
+    "    const rows = getRows();\n"
     "=======\n"
-    "<the lines that should replace them>\n"
+    "  function refreshSidebar() {\n"
+    "    const rows = getRows().filter(Boolean);\n"
     ">>>>>>> REPLACE\n\n"
     "Rules:\n"
-    "- The SEARCH text must appear in the file exactly once. Include enough\n"
-    "  surrounding lines that it is unambiguous.\n"
+    "- Write the REAL file path from the context after '### FILE: '. A path of\n"
+    "  '<path>' or any placeholder is an invalid answer.\n"
+    "- The SEARCH text must appear in the file exactly once. Copy it verbatim\n"
+    "  from the context, including indentation.\n"
     "- Keep SEARCH blocks small: at most 20 lines each, at most 60 lines in total.\n"
     "- At most 2 blocks. If the change would need more, emit only the single most\n"
     "  important block and stop.\n"
@@ -97,6 +105,69 @@ def _normalise(text: str) -> str:
     return "\n".join(line.rstrip() for line in text.splitlines())
 
 
+# Fuzzy anchor matching, as in Aider's patch matcher. Above this similarity the
+# block is accepted at its best-scoring position; the tests still judge it.
+FUZZY_THRESHOLD = 0.82
+
+
+def _locate(body_lines: list[str], search_lines: list[str],
+            exact_only: bool, threshold: float = 1.0) -> int | None:
+    """Index of the single best window matching search_lines, else None.
+
+    exact_only compares with trailing whitespace ignored and requires a unique
+    match. Otherwise every same-length window is scored on character similarity
+    of the whitespace-stripped block (so an indentation difference or one typo
+    does not defeat an otherwise correct anchor), and the best window is
+    accepted only if it clears `threshold` and is clearly better than the
+    runner-up. An ambiguous anchor is refused, never guessed.
+    """
+    n = len(search_lines)
+    if n == 0 or n > len(body_lines):
+        return None
+    needle_text = "\n".join(line.strip() for line in search_lines)
+
+    if exact_only:
+        found = [i for i in range(len(body_lines) - n + 1)
+                 if [l.rstrip() for l in body_lines[i:i + n]] == [l.rstrip() for l in search_lines]]
+        return found[0] if len(found) == 1 else None
+
+    probe = difflib.SequenceMatcher(None, "", needle_text)
+    shortlist: list[tuple[float, int]] = []
+    for i in range(len(body_lines) - n + 1):
+        window_text = "\n".join(line.strip() for line in body_lines[i:i + n])
+        probe.set_seq2(window_text)
+        # quick_ratio is a cheap upper bound; keep the plausible windows only.
+        shortlist.append((probe.quick_ratio(), i))
+    shortlist.sort(reverse=True)
+    scored: list[tuple[float, int]] = []
+    for _, i in shortlist[:8]:
+        window_text = "\n".join(line.strip() for line in body_lines[i:i + n])
+        scored.append((difflib.SequenceMatcher(None, window_text, needle_text).ratio(), i))
+    scored.sort(reverse=True)
+    best = scored[0]
+    if best[0] < threshold:
+        return None
+    if len(scored) > 1 and scored[1][0] > threshold - 0.02:
+        return None        # two plausible positions: refuse to guess
+    return best[1]
+
+
+def _shift_indent(text: str, delta: int) -> str:
+    """Move a replacement block to the indentation of the lines it replaces."""
+    if delta == 0 or not text:
+        return text
+    out: list[str] = []
+    for line in text.splitlines():
+        if not line.strip():
+            out.append(line)
+        elif delta > 0:
+            out.append(" " * delta + line)
+        else:
+            strip = min(-delta, len(line) - len(line.lstrip()))
+            out.append(line[strip:])
+    return "\n".join(out)
+
+
 def apply_edits(tree: Path, edits: list[Edit], max_edits: int = 20,
                 max_block_lines: int = 300, max_total_lines: int = 1200) -> tuple[bool, str]:
     """Apply edits in order. Returns (ok, note). All-or-nothing per block.
@@ -135,30 +206,40 @@ def apply_edits(tree: Path, edits: list[Edit], max_edits: int = 20,
         if hits == 1:
             target.write_text(body.replace(edit.search, edit.replace, 1), encoding="utf-8")
             continue
+        if hits > 1:
+            return False, f"edit {n}: SEARCH matches {hits}x in {edit.path} (must be unique)"
 
-        # one normalisation retry: same lines, trailing whitespace ignored
-        if hits == 0 and edit.search.strip():
-            norm_body, norm_search = _normalise(body), _normalise(edit.search)
-            if norm_body.count(norm_search) == 1:
-                body_lines = body.splitlines(keepends=True)
-                search_line_count = len(norm_search.splitlines())
-                for idx in range(len(body_lines) - search_line_count + 1):
-                    window = _normalise("".join(body_lines[idx:idx + search_line_count]))
-                    if window == norm_search:
-                        new_body = "".join(
-                            body_lines[:idx]
-                            + [edit.replace if edit.replace.endswith("\n") else edit.replace + "\n"]
-                            + body_lines[idx + search_line_count:]
-                        )
-                        target.write_text(new_body, encoding="utf-8")
-                        break
-                else:
-                    return False, f"edit {n}: SEARCH not found in {edit.path}"
+        search_lines = edit.search.splitlines()
+        body_lines = body.splitlines(keepends=True)
+
+        # two normalisation passes, then a fuzzy pass. Aider's matcher is fuzzy
+        # for the same reason: models reproduce an anchor from context with a
+        # stray space, a changed quote, or one altered line, and demanding
+        # literal bytes measures syntax rather than behaviour. The project's
+        # tests still decide whether the edit is correct.
+        if search_lines:
+            idx = _locate(body_lines, search_lines, exact_only=True)
+            if idx is None:
+                idx = _locate(body_lines, search_lines, exact_only=False,
+                              threshold=FUZZY_THRESHOLD)
+            if idx is not None:
+                # Align the replacement to the indentation actually in the file,
+                # so a whitespace-tolerant match does not silently break Python.
+                first = next((line for line in search_lines if line.strip()), "")
+                body_indent = len(body_lines[idx]) - len(body_lines[idx].lstrip())
+                search_indent = len(first) - len(first.lstrip())
+                replacement = _shift_indent(edit.replace, body_indent - search_indent)
+                if not replacement:
+                    replacement = ""
+                elif not replacement.endswith("\n"):
+                    replacement += "\n"
+                target.write_text(
+                    "".join(body_lines[:idx] + [replacement]
+                            + body_lines[idx + len(search_lines):]),
+                    encoding="utf-8")
                 continue
 
-        if hits == 0:
-            return False, f"edit {n}: SEARCH not found in {edit.path}"
-        return False, f"edit {n}: SEARCH matches {hits}x in {edit.path} (must be unique)"
+        return False, f"edit {n}: SEARCH not found in {edit.path}"
     return True, ""
 
 

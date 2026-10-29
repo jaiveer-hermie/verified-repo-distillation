@@ -458,7 +458,7 @@ def run_arm(repo_path: str | Path, pairs: list[Pair], arm: str, client: ChatClie
             cache_root: Path, scratch_root: Path, model: str = DEFAULT_MODEL,
             limit: int | None = None, adapter: str | None = None,
             preset: str | None = "hermes-webui",
-            progress=None) -> list[Score]:
+            progress=None, max_attempts: int = 1) -> list[Score]:
     repo = GitRepo(repo_path)
     scores: list[Score] = []
     docs_cache: dict[str, BM25] = {}
@@ -486,7 +486,34 @@ def run_arm(repo_path: str | Path, pairs: list[Pair], arm: str, client: ChatClie
 
         gen = client.complete(prompt, model=model, arm=arm)
         score = score_patch(repo, pair, gen.text, cache_root, scratch_root, preset)
+
+        # Optional repair loop. Aider's benchmark gives the model a second try
+        # with the test output, and NVIDIA's 59-60% SWE-bench figures come from
+        # multi-turn agentic harnesses; a single shot on a private repo is a
+        # strictly harder task. Attempts are recorded separately so the report
+        # can show pass@1 and pass@k without conflating them.
+        attempts = [{"attempt": 1, "generation": gen, "score": score}]
+        for n in range(2, max_attempts + 1):
+            if score.success:
+                break
+            if not (score.note or gen.text):
+                break
+            retry_prompt = (
+                prompt
+                + f"\n\n## Your previous attempt\n{gen.text[:12000]}\n\n"
+                + "## Result of applying it and running the project's tests\n"
+                + f"{(score.note or 'the tests still fail')[:2000]}\n\n"
+                + "The tests did not pass. Produce a corrected answer in the same "
+                  "format. Fix the specific problem above; do not repeat the same "
+                  "block. Output only the corrected blocks.\n"
+            )
+            gen = client.complete(retry_prompt, model=model, arm=arm)
+            score = score_patch(repo, pair, gen.text, cache_root, scratch_root, preset)
+            attempts.append({"attempt": n, "generation": gen, "score": score})
+
         score.arm = arm
+        score.test_result["attempts"] = len(attempts)
+        score.test_result["first_attempt_success"] = attempts[0]["score"].success
         score.test_result.setdefault("generation", {})
         score.test_result["generation"] = {
             "latency_s": round(gen.latency_s, 2),
