@@ -182,6 +182,16 @@ def hermetic_env(sandbox: Path, preset: str | None, extra: dict[str, str] | None
         "LC_ALL": "C.UTF-8",
         "PYTHONDONTWRITEBYTECODE": "1",
         "TMPDIR": str(sandbox / "tmp"),
+        # ── determinism controls ──────────────────────────────────────────
+        # Tests that depend on string hashing or the clock flip verdicts
+        # between identical runs; that is a property of the harness, not of
+        # the commit. Pin both unless the caller deliberately overrides them.
+        "PYTHONHASHSEED": "0",
+        "TZ": "UTC",
+        "SOURCE_DATE_EPOCH": "1704067200",   # 2024-01-01T00:00:00Z
+        "PYTHONWARNINGS": "ignore",
+        "NO_COLOR": "1",
+        "TERM": "dumb",
     }
     (sandbox / "tmp").mkdir(parents=True, exist_ok=True)
     if preset and preset in ENV_PRESETS:
@@ -437,6 +447,11 @@ def counterfactual_verify(repo: GitRepo, commit: Commit, cache_root: Path,
     least one *named* test transitions fail->pass and that no previously-passing
     test regresses. ``repeats>1`` re-runs the post arm and flags any test whose
     outcome is not stable, which is how a flaky test masquerades as a fix.
+
+    Note that repeats run under the same pinned environment (PYTHONHASHSEED, TZ,
+    SOURCE_DATE_EPOCH) as the first run. A test that only becomes unstable when
+    the hash seed changes is a real flake that this probe cannot see; varying the
+    seed across repeats is a deliberate, more expensive mode.
     """
     t_start = time.time()
     tests = [p for p in commit.added_tests if is_test_path(p)]

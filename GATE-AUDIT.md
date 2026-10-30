@@ -130,7 +130,57 @@ thing more than once.
   Re-running the whole 565 with `--strict --repeats 2` is ~3.8 hours on one
   core, which is the honest price of a corpus you can defend.
 
-## 6. Reproducing
+## 6. Reproducibility: can the gate reproduce itself?
+
+An audit that cannot be re-run is an anecdote. Two things were missing:
+
+**Determinism controls.** `hermetic_env` pinned PATH and HOME but not the two
+things that actually move test outcomes: `PYTHONHASHSEED` (iteration order of
+sets and dicts, which leaks into anything that serialises them) and the clock
+(`TZ`, `SOURCE_DATE_EPOCH`). Both are now pinned by default, with `NO_COLOR` and
+`TERM=dumb` so terminal-aware test code cannot change behaviour. A test that only
+becomes unstable when the hash seed varies is a real flake this probe cannot see;
+varying the seed across repeats is a deliberate, more expensive mode and is not
+the default.
+
+**Verdict drift measurement.** `scripts/reverify.py` replays commits whose verdict
+is already stored, compares the fresh result against the stored one, and reports
+every disagreement with the per-test evidence behind it. This is the check that
+matters for a corpus other people will train on: if `verdicts.jsonl` says a commit
+was verified and a re-run disagrees, the corpus is not reproducible and its size
+is not a fact.
+
+It has already earned its keep. During the strict audit, commit `5fc7aee7` — recorded
+as `verified` — came back `reject_post_failed` on re-run. A verdict that changes
+between runs means the recorded status was never a property of the commit alone.
+
+The dedicated drift survey (independent 40-commit sample, different seed from the
+strict audit) measured it:
+
+```
+agreement: 36/40 = 90.0%   Wilson 95% CI [76.9, 96.0]
+transitions: verified -> reject_no_transition : 4
+exit code: 1
+```
+
+Four commits recorded as `verified` cannot produce a single named test that
+transitions fail→pass when replayed. They are not flaky and they do not fail — they
+were simply never evidence of anything, and the suite-level rule accepted them
+because the suite happened to be red before and green after.
+
+That two independent 40-commit samples, drawn with different seeds and scored under
+different rules, both land at **90%** is the useful signal: the gate's real precision
+is ~90%, not the 100% implied by "525 verified".
+
+```
+python scripts/reverify.py --repo ~/projects/hermes-webui \
+    --data data/hermes-webui-all --sample 40 --strict --repeats 2
+```
+
+Exit code is non-zero when any sampled commit drifts, so it can gate CI the same
+way the oracle does.
+
+## 7. Reproducing
 
 ```bash
 # strict gate on new candidates
@@ -146,7 +196,7 @@ Both write machine-readable output (`verdicts.jsonl`, `audit_strict.json`) whose
 rows name the individual tests, so any verdict can be re-checked later without
 re-running the pipeline.
 
-## 7. References
+## 8. References
 
 - Jimenez, Yang, Wettig, Yao, Pei, Press, Narasimhan. *SWE-bench: Can Language
   Models Resolve Real-World GitHub Issues?* arXiv:2310.06770, ICLR 2024. Source

@@ -1,0 +1,49 @@
+stored verdicts: 565 | pool('verified'): 525
+re-verifying 40 commits (strict=True, repeats=2)
+
+[ 1/40] bded1cf9 OK                                           f2p= 8 flaky=0  14.4s
+[ 2/40] 85f10175 OK                                           f2p= 1 flaky=0  20.2s
+[ 3/40] b49de928 DRIFT verified -> reject_no_transition       f2p= 0 flaky=0  20.4s
+[ 4/40] b8b62722 OK                                           f2p= 5 flaky=0   9.8s
+[ 5/40] c3cf8b10 OK                                           f2p= 6 flaky=0  19.9s
+[ 6/40] 7b6d91d4 DRIFT verified -> reject_no_transition       f2p= 0 flaky=0  12.5s
+[ 7/40] 7019c250 OK                                           f2p=30 flaky=0  15.2s
+[ 8/40] 12a60faa OK                                           f2p= 6 flaky=0  10.1s
+[ 9/40] 128e734d OK                                           f2p= 3 flaky=0  13.4s
+[10/40] 71d8a8fb OK                                           f2p= 4 flaky=0  14.6s
+[11/40] 877a32f4 OK                                           f2p=16 flaky=0   9.9s
+[12/40] c7e52084 OK                                           f2p= 2 flaky=0  11.7s
+[13/40] 0461b97d OK                                           f2p= 2 flaky=0  13.5s
+[14/40] ebb4dffc OK                                           f2p= 3 flaky=0  15.8s
+[15/40] 3ee0173c OK                                           f2p= 2 flaky=0  17.9s
+[16/40] 7d1aa2e2 DRIFT verified -> reject_no_transition       f2p= 0 flaky=0  11.3s
+[17/40] f1ca07c1 OK                                           f2p= 1 flaky=0  14.3s
+[18/40] 39f09a5b OK                                           f2p= 6 flaky=0  18.9s
+[19/40] 1f56fad7 OK                                           f2p=11 flaky=0  14.9s
+[20/40] 618e1a5d OK                                           f2p= 1 flaky=0  17.7s
+[21/40] fceb2552 DRIFT verified -> reject_no_transition       f2p= 0 flaky=0  15.3s
+[22/40] 1f8e8f48 OK                                           f2p= 3 flaky=0  13.1s
+[23/40] b14ef773 OK                                           f2p= 2 flaky=0  15.8s
+[24/40] 887893ec OK                                           f2p= 9 flaky=0  12.6s
+[25/40] b5752524 OK                                           f2p= 7 flaky=0  13.4s
+[26/40] 0dd5d6f2 OK                                           f2p=17 flaky=0  10.3s
+[27/40] 8782fd26 OK                                           f2p= 6 flaky=0  15.6s
+[28/40] 0bd65ef0 OK                                           f2p= 2 flaky=0  14.4s
+[29/40] 9ed06393 OK                                           f2p= 4 flaky=0  12.3s
+[30/40] 011034dc OK                                           f2p= 5 flaky=0  25.0s
+[31/40] d6c1b696 OK                                           f2p= 6 flaky=0  15.7s
+[32/40] c3eafa34 OK                                           f2p= 4 flaky=0  14.8s
+[33/40] 6c5911a7 OK                                           f2p= 9 flaky=0   9.6s
+[34/40] 7bf33431 OK                                           f2p= 4 flaky=0  12.6s
+[35/40] 537c8271 OK                                           f2p= 5 flaky=0  10.5s
+[36/40] 6e64068f OK                                           f2p= 1 flaky=0  15.2s
+[37/40] 311e69b0 OK                                           f2p= 3 flaky=0  12.8s
+[38/40] 5e806f6f OK                                           f2p= 3 flaky=0  11.5s
+[39/40] eeedccec OK                                           f2p= 3 flaky=0  12.8s
+[40/40] 1ad0ab42 OK                                           f2p= 4 flaky=0  12.0s
+
+==============================================================
+agreement: 36/40 = 90.0%
+  verified->reject_no_transition: 4
+report -> /home/jaiveer2507/projects/verified-repo-distillation/data/hermes-webui-all/reverify.json
+REVERIFY_EXIT=1

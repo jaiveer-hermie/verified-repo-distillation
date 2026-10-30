@@ -96,6 +96,34 @@ style, not capability. It learned something about *which* edit to attempt and
 lost contract discipline. The task is not solved by adding corpus-specific
 weights at this scale.
 
+### The primary comparison: base vs tuned, same serving stack
+
+This is the comparison the project exists to make, and it is run on **one server**
+so the adapter is not confounded with the provider's quantization or defaults —
+both arms served `Qwen/Qwen3-30B-A3B-Instruct-2507-FP8` through vLLM 0.32.0, with
+the tuned arm attaching our LoRA adapter via `--enable-lora`.
+
+Same 26 held-out commits, same prompts, same scorer, repair loop enabled:
+
+| arm | tests pass | patches apply | pass per applied |
+|---|---|---|---|
+| **base Qwen3-30B-A3B** | **4/26 (15.4%)** | 17/26 (65%) | 24% |
+| **+ LoRA on 148 verified pairs** | **3/26 (11.5%)** | 6/26 (23%) | 50% |
+
+Solved sets, not just rates: 2 commits are solved by both arms, **2 only by base**
+(`1f56fad7`, `38905f33`), **1 only by the tuned model** (`4153a47d`). Tuning is
+therefore **net −1 task**: it found one commit the base missed and lost two the
+base solved.
+
+Application rate collapsed from 17/26 to 6/26 while pass-per-applied rose from 24%
+to 50%. The adapter did not learn to code better here; it learned to attempt fewer
+edits and, when it lands one, land it correctly. On a task where a patch that fails
+to parse scores zero, that trade is negative.
+
+(An earlier single-attempt run had both arms at 3/26 with an identical solved set.
+Adding the repair loop separates them and moves the base ahead — which is why the
+same-stack, same-attempts run above is the one to quote.)
+
 Serviced note on the repair loop (`--attempts 2`, same server, same prompts):
 a second attempt with the failing test output fed back moved the base model from
 **3/26 to 4/26** (15.4%, CI [6.1, 33.5]) and the tuned model from **3/26 to

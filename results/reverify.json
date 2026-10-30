@@ -1,0 +1,610 @@
+{
+  "sampled": 40,
+  "agree": 36,
+  "agreement_rate": 0.9,
+  "strict": true,
+  "repeats": 2,
+  "seed": 11,
+  "total_wall_s": 571.9,
+  "transitions": {
+    "verified->reject_no_transition": 4
+  },
+  "rows": [
+    {
+      "sha": "bded1cf906fe200d3bf188494d34c5249e20ba26",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue607.TestGemma4MessagesJsThinkPairs::test_messages_js_has_correct_gemma4_open",
+        "tests.test_issue607.TestGemma4MessagesJsThinkPairs::test_messages_js_has_gemma4_close",
+        "tests.test_issue607.TestGemma4ThinkingTokenStrip::test_strip_gemma4_basic",
+        "tests.test_issue607.TestGemma4ThinkingTokenStrip::test_strip_gemma4_case_insensitive",
+        "tests.test_issue607.TestGemma4ThinkingTokenStrip::test_strip_gemma4_empty_reasoning",
+        "tests.test_issue607.TestGemma4ThinkingTokenStrip::test_strip_gemma4_multiline_reasoning",
+        "tests.test_issue607.TestGemma4ThinkingTokenStrip::test_strip_gemma4_with_leading_whitespace",
+        "tests.test_issue607.TestGemma4TitleLeakDetection::test_detects_gemma4_leak_in_title"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 14.4
+    },
+    {
+      "sha": "85f1017514c2df236e7f284a4e6b4d5dfd05467d",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue477::test_font_src_allows_jsdelivr"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 20.2
+    },
+    {
+      "sha": "b49de92893af93226e04039e460c1b300492ebe9",
+      "stored": "verified",
+      "fresh": "reject_no_transition",
+      "agree": false,
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 20.4
+    },
+    {
+      "sha": "b8b62722ec2f6b3cd394737ab409c35650f29ca6",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_sprint19::test_auth_status_disabled",
+        "tests.test_sprint19::test_login_page_served",
+        "tests.test_sprint19::test_login_when_auth_disabled",
+        "tests.test_sprint19::test_security_headers_on_health",
+        "tests.test_sprint19::test_security_headers_on_json"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 9.8
+    },
+    {
+      "sha": "c3cf8b10e9585a3323493c88821e729a11a264af",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_session_lineage_report::test_lineage_report_endpoint_is_read_only_and_uses_active_state_db",
+        "tests.test_session_lineage_report::test_lineage_report_endpoint_returns_404_for_unknown_session",
+        "tests.test_session_lineage_report::test_lineage_report_keeps_cross_surface_parent_out_of_hidden_segments",
+        "tests.test_session_lineage_report::test_lineage_report_marks_bounded_parent_walk_for_manual_review",
+        "tests.test_session_lineage_report::test_lineage_report_returns_bounded_read_only_tip_and_hidden_segments",
+        "tests.test_session_lineage_report::test_lineage_report_surfaces_non_continuation_children_without_mutation"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 19.9
+    },
+    {
+      "sha": "7b6d91d490d71eea851f01fec297981805d9ffa7",
+      "stored": "verified",
+      "fresh": "reject_no_transition",
+      "agree": false,
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.5
+    },
+    {
+      "sha": "7019c25021119108b2fa9f28cae7ca06fec12aa5",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_sprint11::test_models_at_least_one_provider",
+        "tests.test_sprint11::test_models_default_model_not_empty",
+        "tests.test_sprint11::test_models_endpoint_returns_200",
+        "tests.test_sprint11::test_models_groups_structure",
+        "tests.test_sprint11::test_models_has_required_fields",
+        "tests.test_sprint11::test_models_model_structure",
+        "tests.test_sprint11::test_models_no_duplicate_ids",
+        "tests.test_sprint12::test_import_creates_new_id"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.2
+    },
+    {
+      "sha": "12a60faaeec29ab52b9ca29d22c120df69d601ee",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_opencode_providers::test_opencode_go_detected_via_env_key",
+        "tests.test_opencode_providers::test_opencode_go_in_provider_display",
+        "tests.test_opencode_providers::test_opencode_go_in_provider_models",
+        "tests.test_opencode_providers::test_opencode_zen_detected_via_env_key",
+        "tests.test_opencode_providers::test_opencode_zen_in_provider_display",
+        "tests.test_opencode_providers::test_opencode_zen_in_provider_models"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 10.1
+    },
+    {
+      "sha": "128e734df4f93d1c9b4229e92a91b67c55cc39d3",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2025_xiaomi_env_key::test_onboarding_lists_xiaomi_api_key_help",
+        "tests.test_issue2025_xiaomi_env_key::test_xiaomi_api_key_env_var_detects_model_group",
+        "tests.test_issue2025_xiaomi_env_key::test_xiaomi_provider_settings_detects_env_key"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 13.4
+    },
+    {
+      "sha": "71d8a8fb1b01ce6e7ee8dd209d4f12e278eb5908",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_terminal_process_cleanup::test_close_all_terminals_closes_snapshot",
+        "tests.test_terminal_process_cleanup::test_close_terminal_waits_again_after_sigkill",
+        "tests.test_terminal_process_cleanup::test_terminal_module_registers_graceful_shutdown_reaper",
+        "tests.test_terminal_process_cleanup::test_terminal_shell_uses_parent_death_signal_preexec"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 14.6
+    },
+    {
+      "sha": "877a32f49cd7ea9dffd343586646db53782abf23",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_sprint48.TestNotificationDescriptionText::test_english_uses_app_not_tab",
+        "tests.test_sprint48.TestNotificationDescriptionText::test_new_wording_exact",
+        "tests.test_sprint48.TestNotificationDescriptionText::test_old_wording_removed_from_english",
+        "tests.test_sprint48.TestWorkspaceEmptyState::test_empty_state_element_in_html",
+        "tests.test_sprint48.TestWorkspaceEmptyState::test_i18n_empty_dir_string_present",
+        "tests.test_sprint48.TestWorkspaceEmptyState::test_i18n_no_path_mentions_settings",
+        "tests.test_sprint48.TestWorkspaceEmptyState::test_i18n_no_path_string_present",
+        "tests.test_sprint48.TestWorkspaceEmptyState::test_render_file_tree_shows_empty_state"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 9.9
+    },
+    {
+      "sha": "c7e52084ba3e85aba015ecd562a81a144bd35b96",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_session_import_cli_sse_refresh::test_sse_import_cli_guard_skips_shorter_transcript_overwrite",
+        "tests.test_session_import_cli_sse_refresh::test_sse_import_cli_refresh_prefix_helper_ignores_timestamps"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 11.7
+    },
+    {
+      "sha": "0461b97d153860a115983c68e0a3eef71d372893",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_model_picker_escaping::test_model_picker_escapes_provider_supplied_model_labels",
+        "tests.test_model_picker_escaping::test_providers_panel_escapes_load_error_text"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 13.5
+    },
+    {
+      "sha": "ebb4dffc7d6e3069f7efa225bba42b63a344e458",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_command_asset_fallbacks::test_boot_installs_safe_slash_command_fallbacks_when_commands_asset_missing",
+        "tests.test_live_tool_callback_events::test_tool_complete_callback_emits_existing_tool_complete_sse_event_with_tool_id",
+        "tests.test_live_tool_callback_events::test_tool_start_callback_emits_existing_tool_sse_event_with_tool_id"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.8
+    },
+    {
+      "sha": "3ee0173cd3f45c1d88f426f62e0f154849cf1848",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2901_csp_connect_extra::test_csp_connect_src_includes_valid_extra_origins",
+        "tests.test_issue2901_csp_connect_extra::test_csp_connect_src_rejects_directive_injection"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 17.9
+    },
+    {
+      "sha": "7d1aa2e261f3530a1dca6468c83fce4e67ee41f2",
+      "stored": "verified",
+      "fresh": "reject_no_transition",
+      "agree": false,
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 11.3
+    },
+    {
+      "sha": "f1ca07c1867ff32daaf3e741dbb3c2c6ee04e3d8",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2098_logs_i18n::test_logs_severity_filter_keys_are_translated_for_non_english_locales"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 14.3
+    },
+    {
+      "sha": "39f09a5b7ad8db4fdb65f69bc62b8ac124f94388",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue3066_disabled_read_profile::test_disabled_read_empty_when_no_config",
+        "tests.test_issue3066_disabled_read_profile::test_disabled_read_empty_when_no_skills_section",
+        "tests.test_issue3066_disabled_read_profile::test_disabled_read_falls_back_to_global_disabled",
+        "tests.test_issue3066_disabled_read_profile::test_disabled_read_prefers_platform_disabled_webui",
+        "tests.test_issue3066_disabled_read_profile::test_disabled_read_uses_active_profile_config",
+        "tests.test_issue3066_disabled_read_profile::test_normalize_disabled_set_handles_edge_cases"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 18.9
+    },
+    {
+      "sha": "1f56fad73faf8c8f587768c14ee875684db1b990",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_cancels_pending_raf",
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_declared",
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_guards_on_assistant_body",
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_guards_on_render_pending",
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_has_esc_fallback",
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_has_render_md_fallback",
+        "tests.test_issue2713_streaming_segment_flush.TestFlushHelperExists::test_flush_helper_uses_smd_write",
+        "tests.test_issue2713_streaming_segment_flush.TestInterimAssistantHandlerFlush::test_interim_handler_calls_flush"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 14.9
+    },
+    {
+      "sha": "618e1a5da8b8f3e40af37bd5563f8190838af306",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2775_log_request::test_log_request_handles_malformed_request_without_path"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 17.7
+    },
+    {
+      "sha": "fceb255252c6f8a7634ecbcbabb2d99829a4d5f6",
+      "stored": "verified",
+      "fresh": "reject_no_transition",
+      "agree": false,
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.3
+    },
+    {
+      "sha": "1f8e8f48ac7306d31e5e44fd13e0aa218e0acb9c",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_session_runtime_ownership_invariants.TestSessionOwnedRuntimeInvariants::test_approval_and_clarify_pollers_are_stopped_by_owner_session",
+        "tests.test_session_runtime_ownership_invariants.TestSessionOwnedRuntimeInvariants::test_done_event_does_not_clear_unrelated_active_pane_busy_state",
+        "tests.test_session_runtime_ownership_invariants.TestSessionOwnedRuntimeInvariants::test_server_session_finalize_does_not_idle_unrelated_active_pane"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 13.1
+    },
+    {
+      "sha": "b14ef7735f2c0d7d4f20a35fe3c087a336b962df",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2998_panel_primary_contrast::test_dark_theme_panel_primary_buttons_use_dark_foreground_on_bright_accents",
+        "tests.test_issue2998_panel_primary_contrast::test_panel_primary_buttons_use_foreground_token_for_icon_contrast"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.8
+    },
+    {
+      "sha": "887893ecd1ecf0944c8e308bbc219aa151b054a4",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue486_487.TestIssue486CssCodeInTable::test_td_code_font_size_present",
+        "tests.test_issue486_487.TestIssue486CssCodeInTable::test_td_code_has_font_size",
+        "tests.test_issue486_487.TestIssue486CssCodeInTable::test_td_code_has_padding",
+        "tests.test_issue486_487.TestIssue486CssCodeInTable::test_td_code_has_vertical_align",
+        "tests.test_issue486_487.TestIssue486CssCodeInTable::test_th_code_rule_present",
+        "tests.test_issue486_487.TestIssue487ImageRendering::test_image_pass_present_in_ui_js",
+        "tests.test_issue486_487.TestIssue487ImageRendering::test_image_pass_runs_before_link_pass_in_outer",
+        "tests.test_issue486_487.TestIssue487ImageRendering::test_inlinemd_has_image_pass"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.6
+    },
+    {
+      "sha": "b57525241b5555a48c515ff043c2a639d45797f2",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_v050260_docker_invariants::test_compose_files_document_skip_chmod_escape_hatch",
+        "tests.test_v050260_docker_invariants::test_compose_files_warn_about_home_mode_asymmetry",
+        "tests.test_v050260_docker_invariants::test_docs_docker_md_exists_and_covers_failure_modes",
+        "tests.test_v050260_docker_invariants::test_env_docker_example_exists",
+        "tests.test_v050260_docker_invariants::test_env_docker_example_warns_about_home_mode_asymmetry",
+        "tests.test_v050260_docker_invariants::test_readme_links_to_docker_md",
+        "tests.test_v050260_docker_invariants::test_readme_no_stale_root_hermes_path"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 13.4
+    },
+    {
+      "sha": "0dd5d6f21ce0db0fc135cb26e44f5c7e44c276e0",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue673.TestSidebarDensityBootAndPanels::test_boot_applies_sidebar_density",
+        "tests.test_issue673.TestSidebarDensityBootAndPanels::test_boot_fallback_is_compact",
+        "tests.test_issue673.TestSidebarDensityBootAndPanels::test_settings_panel_reads_sidebar_density",
+        "tests.test_issue673.TestSidebarDensityBootAndPanels::test_settings_save_writes_sidebar_density",
+        "tests.test_issue673.TestSidebarDensityConfig::test_sidebar_density_default_is_compact",
+        "tests.test_issue673.TestSidebarDensityConfig::test_sidebar_density_in_defaults",
+        "tests.test_issue673.TestSidebarDensityConfig::test_sidebar_density_in_enum_values",
+        "tests.test_issue673.TestSidebarDensityHTML::test_i18n_wiring_present"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 10.3
+    },
+    {
+      "sha": "8782fd2675750c6ae68ff89bc7c0f44ffd8669a3",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_stage326_composer_draft_validation::test_draft_files_clamped_to_50_entries",
+        "tests.test_stage326_composer_draft_validation::test_draft_files_type_coerced_to_list",
+        "tests.test_stage326_composer_draft_validation::test_draft_text_clamped_to_50kb",
+        "tests.test_stage326_composer_draft_validation::test_draft_text_type_coerced_to_string",
+        "tests.test_stage326_composer_draft_validation::test_draft_validation_appears_before_persist",
+        "tests.test_stage326_pending_goal_continuation_race::test_streaming_finally_does_not_discard_pending_goal_continuation"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.6
+    },
+    {
+      "sha": "0bd65ef0bf2081d91ebe324c434a5de81ba09e94",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_cli_session_tool_metadata::test_existing_cli_import_refreshes_same_length_tool_metadata",
+        "tests.test_cli_session_tool_metadata::test_get_cli_session_messages_preserves_tool_call_metadata"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 14.4
+    },
+    {
+      "sha": "9ed063931977eb30e931d0675c3d263c0734e057",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_sidebar_first_turn_visibility.TestSidebarFirstTurnVisibility::test_backend_compact_counts_pending_first_turn_as_visible",
+        "tests.test_sidebar_first_turn_visibility.TestSidebarFirstTurnVisibility::test_backend_index_filter_keeps_pending_first_turn_sessions",
+        "tests.test_sidebar_first_turn_visibility.TestSidebarFirstTurnVisibility::test_messages_send_optimistically_upserts_active_sidebar_row",
+        "tests.test_sidebar_first_turn_visibility.TestSidebarFirstTurnVisibility::test_sessions_js_has_local_turn_upsert_helper"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.3
+    },
+    {
+      "sha": "011034dc715c8aa0a45e670f156df60b65b6fb50",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_tls_support.TestTLSConfigFlag::test_tls_enabled_false_when_env_absent",
+        "tests.test_tls_support.TestTLSConfigFlag::test_tls_enabled_false_when_only_cert_set",
+        "tests.test_tls_support.TestTLSConfigFlag::test_tls_enabled_true_when_both_env_set",
+        "tests.test_tls_support.TestTLSEndToEnd::test_https_server_responds_to_health",
+        "tests.test_tls_support.TestTLSEndToEnd::test_tls_startup_failure_fallback_to_http"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 25.0
+    },
+    {
+      "sha": "d6c1b696f55a677c2761996dd494ef7081bf9cb8",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_custom_provider_bare_model_reasoning::test_deepseek_r1_bare_name_custom_provider",
+        "tests.test_custom_provider_bare_model_reasoning::test_deepseek_v4_flash_bare_name_custom_provider",
+        "tests.test_custom_provider_bare_model_reasoning::test_kimi_dot_separated_custom_provider",
+        "tests.test_custom_provider_bare_model_reasoning::test_qwen3_dot_separated_custom_provider",
+        "tests.test_custom_provider_bare_model_reasoning::test_reasoning_keyword_in_model_name_custom_provider",
+        "tests.test_custom_provider_bare_model_reasoning::test_thinking_keyword_in_model_name_custom_provider"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.7
+    },
+    {
+      "sha": "c3eafa34f84a1145ed8061bf0ff67af4d7a9edd7",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2540_models_endpoint_error::test_frontend_model_picker_renders_provider_endpoint_hint",
+        "tests.test_issue2540_models_endpoint_error::test_named_custom_provider_models_endpoint_401_surfaces_error",
+        "tests.test_issue2540_models_endpoint_error::test_named_custom_provider_models_endpoint_5xx_preserves_status",
+        "tests.test_issue2540_models_endpoint_error::test_named_custom_provider_models_endpoint_network_error_surfaces_empty_group"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 14.8
+    },
+    {
+      "sha": "6c5911a79f7bec03fe7932f72d3050f4ab2b54aa",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_bugbatch_apr2026::test_567_compose_mentions_macos_uid",
+        "tests.test_bugbatch_apr2026::test_576_panel_restore_gated_on_workspace",
+        "tests.test_bugbatch_apr2026::test_576_restore_happens_after_load_session",
+        "tests.test_bugbatch_apr2026::test_585_get_available_models_calls_reload_config",
+        "tests.test_bugbatch_apr2026::test_594_app_dialog_btn_has_light_theme_override",
+        "tests.test_bugbatch_apr2026::test_594_app_dialog_close_has_light_theme_override",
+        "tests.test_bugbatch_apr2026::test_594_app_dialog_has_light_theme_override",
+        "tests.test_bugbatch_apr2026::test_594_app_dialog_input_has_light_theme_override"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 9.6
+    },
+    {
+      "sha": "7bf33431e41d1ef393df2f1d9abd6c8e58f2d24c",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue513_wsl_autostart::test_windows_task_scheduler_helper_is_idempotent_and_validates_wsl_script_path",
+        "tests.test_issue513_wsl_autostart::test_wsl_autostart_docs_cover_session_and_task_scheduler_options",
+        "tests.test_issue513_wsl_autostart::test_wsl_autostart_launcher_has_safe_duplicate_prevention_and_exports_runtime_env",
+        "tests.test_issue513_wsl_autostart::test_wsl_autostart_launcher_passes_bash_syntax_check"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.6
+    },
+    {
+      "sha": "537c8271db4308cc8b255ee8444b84ea107a8759",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_886_ordered_list_numbering.TestOrderedListNumbering::test_li_value_attr_present_in_ordered_list_block",
+        "tests.test_886_ordered_list_numbering.TestOrderedListNumbering::test_li_value_uses_parsed_number",
+        "tests.test_886_ordered_list_numbering.TestOrderedListNumbering::test_numMatch_variable_present",
+        "tests.test_886_ordered_list_numbering.TestOrderedListNumbering::test_ordered_list_comment_references_issue",
+        "tests.test_886_ordered_list_numbering.TestOrderedListNumbering::test_valAttr_or_value_template_present"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 10.5
+    },
+    {
+      "sha": "6e64068f0f8e36006684124f5cdac7d31124f235",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue2628_cli_sessions_perf::test_importable_agent_rows_push_sidebar_limit_into_sql"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 15.2
+    },
+    {
+      "sha": "311e69b0ba6c615623f0a3687fcf918aec513a3c",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_issue1690_scroll_completion::test_cached_render_path_uses_same_scroll_policy_as_fresh_render",
+        "tests.test_issue1690_scroll_completion::test_render_messages_preserve_scroll_option_uses_user_pin_state_not_stream_liveness",
+        "tests.test_issue1690_scroll_completion::test_terminal_done_render_preserves_manual_scroll_after_active_stream_is_cleared"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.8
+    },
+    {
+      "sha": "5e806f6fd88b79b1e16bba8e33fef17a1b8f57df",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_1466_bfcache_inflight_reattach::test_pageshow_active_session_restore_is_guarded_and_non_blocking",
+        "tests.test_1466_bfcache_inflight_reattach::test_pageshow_checks_persisted_inflight_marker_after_restoring_session",
+        "tests.test_1466_bfcache_inflight_reattach::test_pageshow_restores_active_inflight_session_through_load_session"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 11.5
+    },
+    {
+      "sha": "eeedccec58598b4b916aa2f18c7a8d6d8c15569e",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_streaming_sidebar_scroll::test_scroll_if_pinned_skips_during_recent_non_message_scroll",
+        "tests.test_streaming_sidebar_scroll::test_session_list_has_its_own_scroll_boundary",
+        "tests.test_streaming_sidebar_scroll::test_sidebar_wheel_intent_is_recorded_passively"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.8
+    },
+    {
+      "sha": "1ad0ab42e5e41517294b9968283a72400d3d2a1b",
+      "stored": "verified",
+      "fresh": "verified",
+      "agree": true,
+      "fail_to_pass": [
+        "tests.test_1620_paste_text_with_image.TestPasteHandlerTextWithImage::test_handler_detects_text_in_clipboard",
+        "tests.test_1620_paste_text_with_image.TestPasteHandlerTextWithImage::test_handler_does_not_use_loose_image_check",
+        "tests.test_1620_paste_text_with_image.TestPasteHandlerTextWithImage::test_handler_skips_attach_when_text_present",
+        "tests.test_1620_paste_text_with_image.TestPasteHandlerTextWithImage::test_image_filter_requires_kind_file"
+      ],
+      "regressions": [],
+      "flaky": [],
+      "wall_s": 12.0
+    }
+  ]
+}

@@ -27,15 +27,15 @@ better than the same model with the repository retrieved into its context?
 | false pairs caught by the strict rule | 4 (2 no named transition, 1 non-reproducing, 1 flaky — 4 tests flipping between identical runs) |
 | oracle (gold answer through the identical scorer) | **26 / 26 = 100%** |
 | contamination probe | **0 / 31** held-out lines reproduced |
-| Nemotron 3 Ultra 550B | **17 / 26 (65%)** |
-| Qwen3-30B-A3B base | **3 / 26 (11.5%)**, 4/26 with a repair loop |
-| Qwen3-30B-A3B + LoRA on 148 verified pairs | **3 / 26 (11.5%)** — no gain |
+| **PRIMARY: base Qwen3-30B-A3B** (vLLM, FP8, repair loop) | **4 / 26 (15.4%)**, 17/26 patches apply |
+| **PRIMARY: + LoRA on 148 verified pairs** (same server) | **3 / 26 (11.5%)**, 6/26 patches apply — **net −1 task** |
+| separate vendor arm: Nemotron 3 Ultra 550B (Nebius API) | **17 / 26 (65%)** |
 
-The headline experiment is negative and reported as such: tuning on 148 verified
-pairs did not solve a single additional held-out commit and cut patch-application
-reliability from 84.6% to 38.5%. The gate, the audit, and the measurement
-apparatus are the contribution. See `GATE-AUDIT.md`, `LIMITATIONS.md` and
-`SCALING.md`.
+The headline experiment is negative and reported as such. On one server, one set of
+prompts and one scorer: base solves 4/26, the LoRA-tuned model solves 3/26, and the
+solved sets differ (2 shared, 2 base-only, 1 tuned-only). Tuning is net −1 task and
+cuts patch-application from 17/26 to 6/26. The gate, the audit and the measurement
+apparatus are the contribution. See `GATE-AUDIT.md`, `LIMITATIONS.md`, `SCALING.md`.
 
 ---
 
