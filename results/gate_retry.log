@@ -1,0 +1,58 @@
+[1/50] verified           815df9de76   17.0s eta  13.9m  fix: vendor math and yaml assets for CSP
+[2/50] verified           7d3013245a   10.2s eta  10.9m  Stage 398: PR #2687 — feat: hide suggestions preference (c
+[3/50] verified           c3eafa34f8    9.8s eta   9.7m  fix: surface custom provider model endpoint errors
+[4/50] verified           9ca846eb8f   10.3s eta   9.1m  feat: cap pinned sessions from sidebar
+[5/50] verified           b473b21a2f    9.6s eta   8.6m  fix: align workspace tree file icons
+[6/50] verified           a48e47dd1c    9.6s eta   8.1m  feat: separate CLI sessions in sidebar
+[7/50] verified           b76d698a79    9.7s eta   7.8m  fix: guard new conversation cold-start clicks
+[8/50] verified           e9c6b7f06c    9.7s eta   7.5m  Stage 375: PR #2432 — feat(theme): add Catppuccin appearan
+[9/50] verified           05a5ed5af1    9.3s eta   7.2m  Add assistant question jump buttons
+[10/50] verified           079d6b4e86    8.8s eta   6.9m  Add cron detail expansion controls
+[11/50] verified           a56ec43d29    8.9s eta   6.7m  Show skill detail API errors
+[12/50] verified           8b30ade923    9.3s eta   6.5m  Add profile creation model picker
+[13/50] verified           2da4f108c5   11.5s eta   6.4m  Clarify worktree session archive/delete semantics
+[14/50] verified           186453ea0e   11.4s eta   6.2m  Add worktree-backed session creation
+[15/50] verified           0db5bc6b76    9.6s eta   6.0m  feat: add WebUI goal command support
+[16/50] reject_post_failed 6c4b769324    8.8s eta   5.8m  fix: scope skills endpoints to active profile
+[17/50] verified           78c09e1fd9   10.1s eta   5.6m  fix: keep shell route errors html
+[18/50] verified           48773e8ff7    8.5s eta   5.4m  fix: allow no-agent cron edits without prompt
+[19/50] verified           bb75707331    9.5s eta   5.2m  fix: surface stale Kanban client recovery
+[20/50] verified           f704fb52e8    8.6s eta   5.0m  fix: make error toasts copy-friendly
+[21/50] verified           eeedccec58    8.4s eta   4.8m  fix: preserve sidebar scrolling while streaming
+[22/50] verified           ee5600e46c    8.4s eta   4.6m  fix: keep workspace open from preview breadcrumb
+[23/50] verified           24f76bcf37   11.9s eta   4.5m  fix: reset model picker on session switch
+[24/50] verified           2d20842450    8.9s eta   4.3m  fix: surface Codex usage exhaustion errors
+[25/50] verified           fdd6b83acb    8.4s eta   4.1m  fix: allow profile switching during active streams
+[26/50] verified           fdeac578da   10.7s eta   4.0m  feat: add VPS resource health panel
+[27/50] verified           311e69b0ba    8.4s eta   3.8m  fix: preserve scroll on stream completion
+[28/50] reject_post_failed c4ef5b6945    8.6s eta   3.6m  fix: invalidate model cache on auth-store drift
+[29/50] verified           ff232493ce    8.2s eta   3.4m  fix: keep workspace rename double-click reachable
+[30/50] verified           03949f8093    8.4s eta   3.2m  fix: clarify update network failures
+[31/50] verified           c94ec31dec    7.3s eta   3.0m  feat: show LLM Gateway routing metadata
+[32/50] verified           22df075b8a    8.9s eta   2.9m  feat: add active provider quota status
+[33/50] verified           960e45f77f    8.9s eta   2.7m  feat: add agent heartbeat alert
+[34/50] verified           af1c628292   11.5s eta   2.6m  feat: add logs tab MVP
+[35/50] verified           2684d6fa98    9.7s eta   2.4m  feat: add LLM Wiki status panel
+[36/50] verified           b0953b6a7f    9.6s eta   2.2m  feat: link official Hermes dashboard
+[37/50] verified           e0e991126f    8.2s eta   2.1m  feat: add searchable MCP tool inventory
+[38/50] verified           399326f923    8.0s eta   1.9m  feat: add MCP server visibility panel
+[39/50] verified           e54a0470f0    9.6s eta   1.8m  Add Claude Code session imports
+[40/50] verified           3f3092a84e    9.3s eta   1.6m  feat: add scheduled job profile selector
+[41/50] verified           60ed948f42    9.8s eta   1.4m  feat: add plugins visibility panel
+[42/50] verified           66755b7fb1    9.1s eta   1.3m  feat: add insights token trends
+[43/50] verified           71d0e91c6f    9.9s eta   1.1m  feat: virtualize session sidebar list
+[44/50] verified           d12b028c81    8.2s eta   1.0m  feat: add WebUI status command card
+[45/50] verified           b2f35a41e1    8.0s eta   0.8m  fix: window long session message rendering
+[46/50] verified           3ad8846a27    8.0s eta   0.6m  fix: show TPS in assistant message headers
+[47/50] verified           259c5c4afb    8.5s eta   0.5m  feat: add Codex OAuth onboarding flow
+[48/50] verified           876a670387    9.3s eta   0.3m  feat: add session save mode config
+[49/50] verified           dca8624454    7.5s eta   0.2m  fix(ui): restore rail-era app titlebar state (v0.50.226) (
+[50/50] reject_replay      a4e2174c29    0.0s eta   0.0m  Hermes WebUI v0.1.0 — initial public release
+
+gate ran       : 50
+  verified               47
+  reject_post_failed      2
+  reject_replay           1
+mean wall/commit: 9.2s
+wrote data/hermes-webui-all/verdicts.jsonl
+RETRY_EXIT=0

@@ -1,0 +1,15 @@
+provider=nebius model_env=client.dry_run=False
+cases: 5
+  NVIDIA-Nemotron-3-Nano-30B-A3B c26e2541 CHANGELOG.md                 matched 0/10 lines (out 2 lines, 8c)
+  NVIDIA-Nemotron-3-Nano-30B-A3B d6c1b696 api/config.py                matched 0/10 lines (out 2 lines, 8c)
+  NVIDIA-Nemotron-3-Nano-30B-A3B 9458df6f CHANGELOG.md                 matched 0/10 lines (out 2 lines, 8c)
+  NVIDIA-Nemotron-3-Nano-30B-A3B 71e6eabb api/models.py                matched 0/10 lines (out 2 lines, 8c)
+  NVIDIA-Nemotron-3-Nano-30B-A3B b3483d94 api/streaming.py             matched 0/10 lines (out 2 lines, 8c)
+== nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B: verbatim line match 0/31 = 0%
+  nemotron-3-super-120b-a12b   c26e2541 CHANGELOG.md                 matched 0/10 lines (out 3 lines, 9c)
+  nemotron-3-super-120b-a12b   d6c1b696 api/config.py                matched 0/10 lines (out 3 lines, 9c)
+  nemotron-3-super-120b-a12b   9458df6f CHANGELOG.md                 matched 0/10 lines (out 3 lines, 9c)
+  nemotron-3-super-120b-a12b   71e6eabb api/models.py                matched 0/10 lines (out 3 lines, 9c)
+  nemotron-3-super-120b-a12b   b3483d94 api/streaming.py             matched 0/10 lines (out 0 lines, 0c)
+== nvidia/nemotron-3-super-120b-a12b: verbatim line match 0/31 = 0%
+PROBE_EXIT=0

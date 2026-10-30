@@ -1,0 +1,574 @@
+[1/565] reject_pre_passed  41a8b1deb0   10.6s eta 100.1m  feat: add raw audio upload mode — send audio as attachment
+[2/565] reject_pre_passed  e531a05e60   14.4s eta 117.7m  fix(server): catch client disconnect errors in response wr
+[3/565] verified           00e6d953c2   13.1s eta 119.2m  feat: add distinct attention request sound
+[4/565] verified           d2aa066862   12.4s eta 118.3m  feat: surface session attention badges
+[5/565] verified           d3ee17793a   11.3s eta 115.6m  feat: add internal conversation links
+[6/565] verified           c26e25414e   10.6s eta 112.6m  fix: clarify sidebar session tooltips
+[7/565] verified           d6c1b696f5   11.1s eta 111.1m  fix(reasoning): expose effort levels for bare/dot-separate
+[8/565] verified           9458df6f4d   12.1s eta 111.0m  fix: dedupe sidebar completion session ids
+[9/565] verified           9932899b88   11.5s eta 110.4m  fix: guard session cache ownership across compression
+[10/565] verified           71e6eabb29   10.9s eta 109.2m  fix: let cron sessions bypass CLI_VISIBLE_SESSION_LIMIT fo
+[11/565] verified           d57854807a   10.4s eta 107.9m  fix: keep tool cards anchored during history paging
+[12/565] verified           b3483d943c   11.8s eta 107.8m  fix: close evicted agents from WebUI cache
+[13/565] verified           d34d11821b   11.2s eta 107.3m  fix: label tool output cards persistently
+[14/565] reject_post_failed 7efb4c5acb   16.4s eta 110.2m  fix: scope skill toggles to active profile
+[15/565] verified           e5b31caee1   13.3s eta 110.8m  fix(#3162): const→let in _ensureMessagesLoaded (brick-clas
+[16/565] verified           d2686eaedb   10.5s eta 109.7m  fix: honor shared OpenCode key at runtime
+[17/565] verified           b53bc1a2ea   10.4s eta 108.7m  fix: harden webui passive performance paths
+[18/565] verified           da9211bf43   13.2s eta 109.1m  fix(session): copy all critical fields on duplicate and br
+[19/565] verified           39f09a5b7a   12.6s eta 109.2m  fix: read skills disabled state from active profile
+[20/565] verified           f5dc9477ff   10.4s eta 108.3m  fix: submit composer on numpad enter
+[21/565] verified           53f16c4ee6   12.6s eta 108.4m  fix: log WebUI shutdown diagnostics
+[22/565] verified           0f6eab301c   14.3s eta 109.2m  Fix browser chat provider fallback on fresh sessions
+[23/565] verified           07aed6b7ff    8.7s eta 107.6m  fix(session): preserve subsecond message timestamp order
+[24/565] verified           60d4b2d990   13.7s eta 108.1m  fix: harden WebUI bugfix sweep
+[25/565] verified           9e69db9920   10.6s eta 107.4m  fix: show cron sessions in project filter
+[26/565] verified           9190ab4449   11.1s eta 106.9m  Fix empty partial activity tail recency
+[27/565] verified           c197e0c091   10.0s eta 106.1m  fix: allow current-pane SSE reconnect when unfocused
+[28/565] verified           2ee249112a   10.1s eta 105.4m  fix: defer streaming KaTeX for pending equations
+[29/565] verified           f879fd6bc3    8.7s eta 104.2m  fix: add dry-run discoverability safe repair
+[30/565] verified           83cc12b0bf    8.0s eta 102.9m  feat: add optional gateway-backed WebUI chat (#3021)
+[31/565] verified           c1942a1cd8    9.4s eta 102.1m  fix(sessions): widen #3023 to all 5 session-id validators 
+[32/565] verified           0af58f2b82    8.4s eta 101.1m  feat: add session discoverability audit
+[33/565] verified           38905f335c   10.3s eta 100.6m  fix: preserve messageful sidebar discoverability
+[34/565] verified           b14ef7735f   10.1s eta 100.1m  Fix workspace save icon contrast
+[35/565] verified           74fe79ddc6   10.9s eta  99.8m  fix(reasoning): use agent metadata for effort support
+[36/565] verified           3a676b704a    8.4s eta  98.9m  feat: add skill usage counter to insights page
+[37/565] verified           ea3d4ec0b3   10.0s eta  98.4m  feat(cron): dynamic delivery options from API instead of h
+[38/565] verified           3a9948d6cf   12.4s eta  98.5m  Fix streaming SessionDB profile path
+[39/565] reject_replay      815df9de76    6.5s eta  97.3m  fix: vendor math and yaml assets for CSP
+[40/565] verified           fceb255252    9.5s eta  96.8m  fix(session): anchor message windows on renderable tail ro
+[41/565] verified           65cae8f1a5   13.9s eta  97.2m  Improve sidebar chat search highlighting
+[42/565] verified           ecfa580660   10.2s eta  96.8m  fix(config): exclude credential-rotation fields from model
+[43/565] verified           7a52dec35d   12.1s eta  96.8m  feat(chat): open workspace links in preview
+[44/565] verified           fe597c1cdf   11.1s eta  96.6m  fix chat upload attachment paths
+[45/565] verified           0db8f5ded4   15.3s eta  97.3m  fix(terminal): harden supervisor lifecycle and eliminate t
+[46/565] verified           3ee0173cd3   12.7s eta  97.4m  feat(server): allow extra CSP connect sources
+[47/565] verified           524ed6cce3   13.5s eta  97.6m  fix(streaming): preserve profile env for checkpoints
+[48/565] verified           e265389116   18.2s eta  98.6m  perf(sessions): prime missing index in background
+[49/565] verified           459286830b   21.8s eta 100.2m  fix(session): preserve sidecar truncation boundary
+[50/565] reject_post_failed 2881fcec89   23.6s eta 102.1m  fix(agent_health): detect profile-scoped gateway.pid for c
+[51/565] verified           85e13a6121   24.7s eta 104.1m  fix: reserve space for clarify dialogs
+[52/565] verified           5b9484b816   26.2s eta 106.2m  fix(streaming): suppress visible progress echoes
+[53/565] verified           f8a7726e09   31.8s eta 109.1m  fix(windows): align WebUI defaults with Hermes Agent home 
+[54/565] verified           a9ce2889af   24.0s eta 110.7m  fix(ui): hide reasoning chip when model lacks effort level
+[55/565] reject_post_failed c60ff543b5   17.6s eta 111.1m  feat: add passkey sign-in
+[56/565] verified           c616c8e788   19.0s eta 111.8m  fix: cap live tool prompt estimates
+[57/565] verified           8a2f11c770   25.1s eta 113.4m  fix(chat): log sanitized client sse diagnostics
+[58/565] verified           b0f7a7bdff   28.6s eta 115.4m  feat: add PWA sidebar edge swipe
+[59/565] reject_post_failed 4f20cbd6ca   26.8s eta 117.0m  Stage 406: PR #2673 — Add scoped workspace Artifacts tab b
+[60/565] reject_pre_passed  fd1c4eaeaf   16.5s eta 117.2m  Stage 406: PR #2827 — fix(state-sync): pass profile explic
+[61/565] verified           a86b378036   22.7s eta 118.1m  Stage 405: PR #2680 — feat: add Auxiliary Models settings 
+[62/565] verified           2419b3a0a2   15.8s eta 118.1m  Stage 404: PR #2830 — fix(sessions): keep pin state author
+[63/565] reject_post_failed c77936ff81   13.2s eta 117.8m  feat(i18n): add Turkish (tr) locale support
+[64/565] verified           237bab753a   10.5s eta 117.1m  feat: surface live activity timeline (#2847)
+[65/565] verified           70402f96f1   13.7s eta 116.8m  fix(workspace): fall back for large markdown previews
+[66/565] verified           99c886c199   27.1s eta 118.2m  fix(workspace): open rendered preview links correctly
+[67/565] verified           f1586daa3b   13.4s eta 117.9m  fix(cron): surface gateway scheduling guidance
+[68/565] verified           67a204773e   12.0s eta 117.4m  fix(csrf): clarify rejection diagnostics
+[69/565] verified           618e1a5da8   13.0s eta 117.0m  fix(server): tolerate malformed request logging
+[70/565] verified           7999d1c75a   11.6s eta 116.4m  feat(workspace): add Open in VS Code action for files and 
+[71/565] verified           d20da832b3   12.8s eta 116.1m  fix(static): tighten cache validators and 304 headers
+[72/565] verified           160cd03c18   10.4s eta 115.4m  fix(chat): reset reasoning accumulator per turn and prefer
+[73/565] verified           1f56fad73f   10.5s eta 114.8m  fix(chat): flush pending render before segment reset at to
+[74/565] verified           d7f1514d96   10.0s eta 114.1m  fix(models): surface bedrock provider in WebUI model picke
+[75/565] verified           12becd1f4b   10.2s eta 113.5m  fix(chat): rename _inflightStateLimits() to _getInflightSt
+[76/565] verified           b2477974c5    9.8s eta 112.8m  fix: make in-flight recovery storage quota-safe
+[77/565] verified           35adc3a473   12.2s eta 112.4m  feat: add per-skill enable/disable toggle in Skills panel
+[78/565] verified           53f294dc8d    9.6s eta 111.7m  Fix composer model picker opening lag
+[79/565] verified           af1ee81f06   10.1s eta 111.1m  fix(chat): resolve session model before activating
+[80/565] verified           4153a47d0f   10.5s eta 110.6m  feat: new_session() reads display.personality from config 
+[81/565] reject_pre_passed  5b41f03a92   11.4s eta 110.1m  fix(webui): close sqlite3 connections in handoff-summary p
+[82/565] verified           dabe7b0ea5    9.9s eta 109.5m  fix(session): keep conversation actions menu clickable
+[83/565] verified           f81d24ec4c   10.2s eta 109.0m  fix(chat): resync sidebar after panel switch
+[84/565] verified           b14aae4ee5    9.9s eta 108.4m  Stage 400: PR #2717 — fix: surface update check fetch erro
+[85/565] verified           80356c3a47   10.2s eta 107.8m  Stage 400: PR #2709 — fix(model): prefer profile default m
+[86/565] verified           cc36711b9f   10.2s eta 107.3m  Stage 400: PR #2710 — fix: render streamed math incrementa
+[87/565] verified           3874781a57   10.6s eta 106.8m  Stage 399: PR #2704 — fix(streaming): prevent exponential 
+[88/565] verified           7152da2756   10.8s eta 106.4m  Stage 399: PR #2705 — fix(api): dedupe replayed context_me
+[89/565] verified           905b3eba5e   10.3s eta 105.9m  Stage 398: PR #2700 — feat: make pinned session limit conf
+[90/565] reject_replay      7d3013245a    5.6s eta 105.0m  Stage 398: PR #2687 — feat: hide suggestions preference (c
+[91/565] verified           8e1ac89baa    9.9s eta 104.4m  Stage 397: PR #2692 — fix(ui): invalidate transcript cache
+[92/565] reject_post_failed d5dcd60981    9.7s eta 103.9m  Stage 397: PR #2674 — fix: new-chat default model provider
+[93/565] verified           3dd2ace4e1   10.1s eta 103.4m  Stage 397: PR #2689 — fix(chat): preserve inflight send st
+[94/565] verified           12a92dd50a   10.2s eta 103.0m  Stage 397: PR #2671 — fix: SSE reconnect jitter + cron run
+[95/565] verified           7f1feca3fe    9.9s eta 102.5m  feat: sidebar tab visibility toggle in Settings > Appearan
+[96/565] verified           6e64068f0f   10.0s eta 102.0m  fix: cap CLI session sidebar state scans
+[97/565] verified           5e378d3b38    7.4s eta 101.4m  sync session list from server events
+[98/565] reject_replay      c3eafa34f8    5.5s eta 100.6m  fix: surface custom provider model endpoint errors
+[99/565] verified           5fc7aee781   17.7s eta 100.7m  feat(workspace): add backend Git operations
+[100/565] reject_replay      9ca846eb8f    5.7s eta  99.9m  feat: cap pinned sessions from sidebar
+[101/565] verified           4598adfd04   10.2s eta  99.5m  feat: add Geist Contrast skin
+[102/565] verified           54b6c38578    9.2s eta  99.0m  feat(health): expose WebUI stream runtime diagnostics
+[103/565] verified           ebb4dffc7d   10.5s eta  98.6m  fix: stream live tool callback events
+[104/565] verified           acd1df1112   12.7s eta  98.4m  fix: time out hung browser api requests
+[105/565] verified           0736e45485   10.2s eta  98.0m  fix: dedupe tool-only partial recovery markers
+[106/565] verified           bc7648271f    9.6s eta  97.6m  fix: preserve provider for configured model picker selecti
+[107/565] verified           71d8a8fb1b    9.6s eta  97.1m  fix: reap terminal shells on shutdown
+[108/565] verified           467ef33a24   14.3s eta  97.0m  feat(webui): reconcile external session updates
+[109/565] verified           1827ea3efd    9.8s eta  96.6m  fix: add Grok OAuth provider catalog support
+[110/565] verified           6caf86ba96   10.0s eta  96.2m  feat(workspace): download folder as zip via /api/folder/do
+[111/565] reject_replay      b473b21a2f    5.2s eta  95.5m  fix: align workspace tree file icons
+[112/565] reject_replay      a48e47dd1c    5.2s eta  94.8m  feat: separate CLI sessions in sidebar
+[113/565] verified           b6b9deca4c   10.5s eta  94.4m  fix: refresh project move cache
+[114/565] verified           b2e1bac149    9.7s eta  94.0m  fix(config): keep anonymous custom endpoints in picker whe
+[115/565] reject_pre_passed  2fe0ece991    9.9s eta  93.7m  fix(upload): scope archive extraction to per-session attac
+[116/565] verified           5c1161f84f   10.5s eta  93.3m  feat(chat): load WebUI prefill context
+[117/565] verified           8e65ad3063   10.3s eta  93.0m  fix(chat): add WebUI surface context to agent turns
+[118/565] reject_replay      b76d698a79    5.2s eta  92.3m  fix: guard new conversation cold-start clicks
+[119/565] verified           1f3b7aa2c3   11.0s eta  92.0m  feat(memory): show third-party notes sources
+[120/565] verified           f3f9f3ed40   10.1s eta  91.7m  fix: allow keyless named custom endpoints
+[121/565] verified           037652308d    9.5s eta  91.3m  fix: load remote models for named custom providers
+[122/565] verified           cec1e87d04   10.0s eta  90.9m  Stage 382: PR #2500 (with whitespace polish on panels.js +
+[123/565] verified           ea1261d03b   11.8s eta  90.7m  Stage 382: PR #2501
+[124/565] verified           996942429c   11.7s eta  90.5m  Add session-bound CSRF token checks
+[125/565] verified           9646773487    9.6s eta  90.1m  Add selected text reply composer append
+[126/565] verified           310d69bed8    9.5s eta  89.7m  docs: inventory agent source boundary
+[127/565] verified           f986507809   11.0s eta  89.5m  fix: align fork-from-here with merged messaging history
+[128/565] verified           5cc8b6c654    9.6s eta  89.1m  docs(docker): document agent-image upgrade flow + read-onl
+[129/565] verified           fdff99c9f8    9.4s eta  88.7m  fix: refresh theme command i18n help
+[130/565] verified           bd9a4924bf    9.3s eta  88.4m  fix: clear stale active session spinner
+[131/565] verified           aecad0f427   11.4s eta  88.1m  [verified] Fix WebUI memory session lifecycle commits
+[132/565] verified           d45d4c08b5   18.6s eta  88.3m  Stage 375: PR #2428 stage-fix — hex-escape brace literals 
+[133/565] reject_replay      e9c6b7f06c    5.2s eta  87.7m  Stage 375: PR #2432 — feat(theme): add Catppuccin appearan
+[134/565] verified           9fec727cf7   11.0s eta  87.4m  Stage 374: PR #2424 — feat(runtime): add default-off Runti
+[135/565] verified           47c210899e    9.8s eta  87.1m  Stage 374: PR #2421 — fix(cache-tokens): surface provider 
+[136/565] reject_pre_passed  54f1a2acae    9.0s eta  86.7m  Stage 373: PR #2415 — fix: ignore provider config flags in
+[137/565] verified           3480e75e13    9.7s eta  86.4m  Stage 372: PR #2413 — feat(quota-chip): add Settings toggl
+[138/565] verified           a4ab7d4d27   10.6s eta  86.1m  Stage 371: PR #2409 — Stuck-PR sweep: salvage RTL chat fro
+[139/565] verified           48b82d57db    9.2s eta  85.8m  fix: reduce browser storage pressure
+[140/565] verified           3bb8c7b276    9.0s eta  85.4m  fix: guard localStorage quota writes
+[141/565] verified           80be1d08dc    9.0s eta  85.1m  Fix Markdown table cell paragraph spacing
+[142/565] verified           690b666887   10.0s eta  84.8m  Add OpenRouter cost history backend
+[143/565] verified           b293bf8bc5    9.6s eta  84.4m  stage-364: Opus-caught live SSE event_id fix (side-channel
+[144/565] verified           f3b0c2cb5f    9.4s eta  84.1m  stage-364: Opus-caught replay double-render fix + regressi
+[145/565] verified           3b96035af0   10.0s eta  83.8m  Add WebUI run event journal replay
+[146/565] verified           b373f090bd    9.0s eta  83.5m  feat: clarify profiles and workspaces
+[147/565] verified           2162dab4a5    9.1s eta  83.1m  Fix pending user row on active reattach
+[148/565] verified           4d613e723f    9.4s eta  82.8m  feat: add workspace panel edge reopen toggle
+[149/565] verified           2fdc1d99e2    9.1s eta  82.5m  fix: expand legacy Hermes CLI toolset alias
+[150/565] verified           b2cbf7bb2f    9.3s eta  82.2m  Seed bundled skills for WebUI profile creation
+[151/565] reject_replay      05a5ed5af1    5.1s eta  81.7m  Add assistant question jump buttons
+[152/565] reject_replay      079d6b4e86    5.1s eta  81.2m  Add cron detail expansion controls
+[153/565] verified           b7f8b97e76    8.9s eta  80.8m  Fix offline banner warning theme colors
+[154/565] verified           3a4259476d    9.4s eta  80.5m  fix: clear runtime fields on compression snapshots
+[155/565] verified           a90c0f6782    9.0s eta  80.2m  Skip agent git objects during Docker chown
+[156/565] verified           5f9b9c02b2    9.8s eta  79.9m  Fix WebUI stream completion recovery gaps
+[157/565] verified           d246bf2654    9.1s eta  79.6m  fix: canonicalize configured provider model lookup
+[158/565] verified           0461b97d15    9.1s eta  79.3m  Escape model picker display text
+[159/565] reject_replay      a56ec43d29    5.1s eta  78.9m  Show skill detail API errors
+[160/565] verified           ac66c9093f    9.2s eta  78.6m  Improve mobile session list actions
+[161/565] verified           120ec5eba2    8.0s eta  78.2m  fix: silent failure detection scans only new messages, not
+[162/565] reject_replay      8b30ade923    5.0s eta  77.7m  Add profile creation model picker
+[163/565] verified           5bbf18324c    9.6s eta  77.5m  fix: preserve session history during compression rotation 
+[164/565] verified           4b455822cb    9.5s eta  77.2m  Fix MCP tools list overflow
+[165/565] verified           1e17760a04    8.6s eta  76.9m  Fix opencode-go provider overlap routing
+[166/565] verified           0381294f1c   10.5s eta  76.6m  feat: add early session provisional titles
+[167/565] verified           2dfe765b60    9.2s eta  76.4m  fix: stabilize Firefox session sidebar scrolling
+[168/565] verified           c522384c6d    9.2s eta  76.1m  Fix fork-from-here keep count for truncated sessions
+[169/565] verified           9e45de463d   10.2s eta  75.8m  fix: prevent 404 on /api/session/compress/status during se
+[170/565] verified           b7ac5a8b88   10.5s eta  75.6m  Trim session tail response overhead
+[171/565] verified           9b1d786459    8.7s eta  75.3m  fix(config): preserve nvidia/ prefix on NVIDIA NIM (closes
+[172/565] verified           e78945e7ca   11.2s eta  75.1m  Skip CLI metadata lookup for native sessions
+[173/565] verified           bc3f4e54a6   33.0s eta  75.7m  Cache PBKDF2 password hash to eliminate ~1s overhead on ev
+[174/565] verified           f1ca07c186    9.1s eta  75.4m  Localize logs severity filters
+[175/565] verified           5ae63ddd13   10.2s eta  75.2m  Fix stale stream state in session list
+[176/565] verified           93b7d35bfa   11.0s eta  75.0m  Issue #2057 Slice 2: Add worktree remove action
+[177/565] verified           4b57b202a0    9.7s eta  74.7m  fix: guard stale stream writebacks
+[178/565] verified           e4d16e93c7    8.1s eta  74.4m  fix: clarify cancelled chat turn status
+[179/565] verified           4084c3cf56   10.7s eta  74.2m  perf(sessions): cache CLI session scans
+[180/565] verified           e03c197cdf    9.8s eta  73.9m  fix: recover from stale deleted workspaces
+[181/565] verified           dd543e4175    8.9s eta  73.6m  fix: purge missing inflight sessions
+[182/565] verified           ff0830de4d    9.1s eta  73.4m  fix(ui): smooth iPhone PWA bottom-edge bounce in chat
+[183/565] verified           6e1e9fafbe   13.0s eta  73.2m  Add worktree status endpoint
+[184/565] reject_replay      2da4f108c5    5.6s eta  72.8m  Clarify worktree session archive/delete semantics
+[185/565] verified           98c9a3de72    9.0s eta  72.6m  test: tighten CI and console hygiene
+[186/565] verified           52fedbc783   10.3s eta  72.3m  feat: add per-cron toast notification toggle
+[187/565] verified           67e29fa991   10.5s eta  72.1m  feat: add opt-in streaming text fade
+[188/565] reject_post_failed c3fea4db3e    7.2s eta  71.8m  fix: add report-only CSP header
+[189/565] verified           18124ced62    7.1s eta  71.4m  Refactor compression anchor visibility helpers
+[190/565] verified           a0e9c06102    8.8s eta  71.2m  Fix HERMES_HOME skill cache patching
+[191/565] verified           d30263bcf1    9.4s eta  70.9m  test: allow top-level markdown docs
+[192/565] verified           4b486f2860    7.8s eta  70.6m  feat: record turn journal lifecycle events
+[193/565] verified           5cd001d545    8.1s eta  70.3m  feat: add crash-safe turn journal writer
+[194/565] verified           12cef733e3    9.2s eta  70.1m  fix(recovery): preserve worktree metadata + workspace + me
+[195/565] verified           2ca220eec0    8.7s eta  69.8m  fix(config): PR #1970 lmstudio branch must honor cfg.model
+[196/565] verified           a6174d08db    9.1s eta  69.5m  test(infra): hermetic network isolation — block all outbou
+[197/565] verified           2dbee503c2   10.2s eta  69.3m  feat(ux): collapse sidebar by clicking the active rail ico
+[198/565] reject_replay      186453ea0e    5.9s eta  69.0m  Add worktree-backed session creation
+[199/565] verified           3fd20599e8   10.5s eta  68.7m  fix: validate workspaces on session import
+[200/565] verified           a34ded8e99    7.2s eta  68.4m  feat: reconcile missing WebUI sidecars from state db
+[201/565] verified           90c3611732    7.3s eta  68.1m  feat: expose session recovery audit and safe repair endpoi
+[202/565] verified           2ead7daa2f    9.7s eta  67.9m  fix: expose active run lifecycle in health
+[203/565] verified           7b6d91d490    7.4s eta  67.6m  feat: add read-only session recovery audit
+[204/565] verified           128e734df4    8.9s eta  67.3m  Fix Xiaomi API key env detection
+[205/565] verified           a27f1bf7db    9.2s eta  67.1m  Clarify one-shot cron schedules
+[206/565] verified           d620f4394a   10.4s eta  66.9m  fix: prewarm skill imports outside env lock
+[207/565] verified           8aed650b4c    9.8s eta  66.7m  Stitch continued session transcripts in WebUI
+[208/565] verified           c3cf8b10e9   11.0s eta  66.5m  feat: add read-only session lineage report
+[209/565] verified           e64e02479f    9.9s eta  66.2m  Fix CLI session patch diff rendering
+[210/565] verified           f7938372ba    8.8s eta  66.0m  fix: wrap markdown code blocks on mobile
+[211/565] verified           8f077d37f7    8.5s eta  65.7m  Fix German profile_skill_count interpolation
+[212/565] verified           a3af4a3c8f    9.0s eta  65.5m  fix(profile/mcp): discover MCP tools after per-session HER
+[213/565] verified           57c71e89f3    8.9s eta  65.2m  fix(docker): salvage operational hardening from #1686 (env
+[214/565] verified           8782fd2675    9.8s eta  65.0m  fix(stage-326): apply Opus advisor critical + recommended 
+[215/565] verified           6fd07c2af4    9.3s eta  64.8m  fix: only evaluate goal hook on goal-related turns (#1932)
+[216/565] verified           fb822239ea    8.9s eta  64.5m  fix(#1937): close endless-scroll prefetch vs Start-jump ra
+[217/565] verified           ea8aca2818    8.6s eta  64.3m  feat: add opt-in session endless scroll
+[218/565] verified           df1ba9fde8    8.8s eta  64.0m  feat: add opt-in session jump buttons
+[219/565] verified           8f58a8c94e    8.7s eta  63.8m  feat: add browser offline recovery and PWA cache hardening
+[220/565] verified           018d491570    8.5s eta  63.5m  fix: preserve viewport when loading older messages
+[221/565] verified           c65ae46983    8.7s eta  63.3m  fix: prevent chat scroll resets after final render
+[222/565] verified           e8fd8dac5d    8.5s eta  63.1m  Persist login rate limit attempts
+[223/565] verified           b1b0cedbe9    8.6s eta  62.8m  security: harden production Docker image
+[224/565] reject_replay      0db5bc6b76    4.8s eta  62.5m  feat: add WebUI goal command support
+[225/565] reject_post_failed 6b80cc781f   22.8s eta  62.6m  feat(mcp): Option A rewrite — import api.models/api.profil
+[226/565] verified           ccdc055c36    7.3s eta  62.3m  Fix workspace prefix sentinel handling
+[227/565] verified           0efa75827a    8.5s eta  62.1m  fix(streaming): pass config overrides into context-length 
+[228/565] verified           f456daa574    8.5s eta  61.8m  fix(streaming): include profile home in agent cache signat
+[229/565] reject_replay      6c4b769324    4.5s eta  61.5m  fix: scope skills endpoints to active profile
+[230/565] verified           c1a9d7ce79    9.0s eta  61.2m  fix: overwrite session usage per turn
+[231/565] verified           01b9c82dc9    8.5s eta  61.0m  fix: honor configured max_turns in WebUI agents
+[232/565] verified           7e2709e281    7.2s eta  60.7m  fix: add request wedge diagnostics
+[233/565] verified           29829c3edf    8.6s eta  60.5m  fix: preflight oversized browser uploads
+[234/565] verified           efcfff3d7f    8.8s eta  60.3m  fix(#1879): cross-container gateway liveness via state-fil
+[235/565] reject_pre_passed  a958c29373    8.4s eta  60.0m  fix(config): phantom Custom group when active provider is 
+[236/565] verified           d8612ba323    8.3s eta  59.8m  fix: add cdn.jsdelivr.net to CSP connect-src to allow xter
+[237/565] reject_replay      78c09e1fd9    5.4s eta  59.5m  fix: keep shell route errors html
+[238/565] verified           72982db94b    8.4s eta  59.2m  fix: add workspace heading root actions
+[239/565] reject_replay      48773e8ff7    4.5s eta  58.9m  fix: allow no-agent cron edits without prompt
+[240/565] verified           36de8f1fc6    8.5s eta  58.7m  fix: hide workspace file tree cruft by default
+[241/565] reject_replay      bb75707331    5.1s eta  58.4m  fix: surface stale Kanban client recovery
+[242/565] verified           8bc2677691    8.7s eta  58.1m  fix: repair file picker and html preview interactions
+[243/565] reject_replay      f704fb52e8    4.5s eta  57.8m  fix: make error toasts copy-friendly
+[244/565] verified           9633ed345b    8.6s eta  57.6m  fix: preserve context card render ordering
+[245/565] verified           fbc023bb17    8.7s eta  57.4m  fix: keep approval and clarify prompts session-owned
+[246/565] verified           f7902776d4    8.5s eta  57.1m  fix: use live Codex models in providers card
+[247/565] verified           9f72472896    8.6s eta  56.9m  fix(bootstrap): discover agent dir via `hermes` CLI sheban
+[248/565] verified           4c03fdfaa8    6.7s eta  56.6m  fix: add workspace user turn repair utility
+[249/565] verified           1192a0a766    8.9s eta  56.4m  fix: preserve inaccessible workspace entries
+[250/565] verified           3ac89c2696    8.5s eta  56.2m  fix: route named custom provider model selections
+[251/565] verified           b49c3cbd43    8.7s eta  56.0m  fix(ux): rail tooltips, +new-conversation clipping, contex
+[252/565] reject_replay      eeedccec58    4.5s eta  55.7m  fix: preserve sidebar scrolling while streaming
+[253/565] reject_replay      ee5600e46c    4.4s eta  55.4m  fix: keep workspace open from preview breadcrumb
+[254/565] verified           b86bdf9dc8    9.4s eta  55.2m  fix(ux): replace native title tooltips with custom CSS too
+[255/565] reject_replay      24f76bcf37    5.8s eta  54.9m  fix: reset model picker on session switch
+[256/565] verified           0bd65ef0bf    9.4s eta  54.7m  fix: preserve CLI session tool metadata
+[257/565] reject_replay      2d20842450    4.6s eta  54.4m  fix: surface Codex usage exhaustion errors
+[258/565] verified           f77a44fce2    9.4s eta  54.2m  feat(ux): three high-leverage context-menu essentials from
+[259/565] verified           9711070119    8.6s eta  54.0m  fix: resolve rsplit collision for OpenRouter models with :
+[260/565] verified           eab39f14db    9.6s eta  53.8m  fix: gateway status card shows 'not running' when no platf
+[261/565] verified           98a6f88ef7    8.5s eta  53.6m  fix: scope terminal stream cleanup to owner session
+[262/565] verified           759c25655d    8.6s eta  53.4m  feat(composer): click pasted/attached image thumbnails to 
+[263/565] verified           b9bf00efe1    9.5s eta  53.2m  fix: shorten cron profile lock for manual runs
+[264/565] verified           1f8e8f48ac    8.4s eta  52.9m  test: guard session-owned runtime invariants
+[265/565] verified           ff0d25fd0e    7.0s eta  52.7m  fix(workspace): strip surrounding quotes from Add Space pa
+[266/565] verified           e9aac079e1    8.5s eta  52.5m  feat(theme): expose active --bg via <meta name="theme-colo
+[267/565] verified           1a31ae561e    8.4s eta  52.3m  fix: wait for model catalog before opening picker
+[268/565] reject_replay      fdd6b83acb    4.5s eta  52.0m  fix: allow profile switching during active streams
+[269/565] verified           8138ca8479    8.5s eta  51.8m  fix: keep saved running sessions sidebar-only on root boot
+[270/565] verified           97aa3247e1    8.4s eta  51.6m  fix(test-isolation): in-stage fixes for stage-302 pre-rele
+[271/565] verified           63239d5b3c    8.7s eta  51.4m  fix(models): delegate generic provider catalogs to Hermes 
+[272/565] verified           9bb4fad0e8    9.4s eta  51.2m  fix(streaming): unpin scroll on small upward motion during
+[273/565] verified           29878259ca    9.7s eta  51.0m  docs(troubleshooting): bake the #1695 diagnostic flow into
+[274/565] verified           8b34a79f02    8.5s eta  50.8m  fix: preserve imported session lineage visibility
+[275/565] reject_replay      fdeac578da    5.2s eta  50.5m  feat: add VPS resource health panel
+[276/565] verified           d3c8a7c6a5    8.3s eta  50.3m  fix(workspace): hide 'Double-click to rename' tooltip on f
+[277/565] reject_replay      311e69b0ba    4.4s eta  50.0m  fix: preserve scroll on stream completion
+[278/565] verified           b5e8e67d71   14.2s eta  49.9m  fix(workspace): preserve single-click open + double-click 
+[279/565] verified           8c8e2d3573   10.1s eta  49.7m  fix: keep multi-image paste attachments
+[280/565] reject_replay      c4ef5b6945    4.4s eta  49.4m  fix: invalidate model cache on auth-store drift
+[281/565] reject_replay      ff232493ce    4.3s eta  49.2m  fix: keep workspace rename double-click reachable
+[282/565] verified           0fe3927655    8.3s eta  49.0m  fix: surface Codex spark models
+[283/565] reject_replay      03949f8093    4.4s eta  48.7m  fix: clarify update network failures
+[284/565] reject_replay      c94ec31dec    3.0s eta  48.4m  feat: show LLM Gateway routing metadata
+[285/565] reject_replay      22df075b8a    4.5s eta  48.1m  feat: add active provider quota status
+[286/565] reject_replay      960e45f77f    4.7s eta  47.9m  feat: add agent heartbeat alert
+[287/565] verified           e2748fe961   10.7s eta  47.7m  Apply Opus pre-release SHOULD-FIX (absorbed in stage-299)
+[288/565] verified           4e9ec6f191    8.3s eta  47.5m  fix(sidebar): scroll jumps back to 0 on small lists (≤80 s
+[289/565] reject_replay      af1c628292    6.7s eta  47.3m  feat: add logs tab MVP
+[290/565] reject_replay      2684d6fa98    5.0s eta  47.0m  feat: add LLM Wiki status panel
+[291/565] reject_replay      b0953b6a7f    4.9s eta  46.8m  feat: link official Hermes dashboard
+[292/565] reject_replay      e0e991126f    3.4s eta  46.5m  feat: add searchable MCP tool inventory
+[293/565] reject_replay      399326f923    4.4s eta  46.2m  feat: add MCP server visibility panel
+[294/565] reject_replay      e54a0470f0    5.4s eta  46.0m  Add Claude Code session imports
+[295/565] reject_replay      3f3092a84e    5.4s eta  45.7m  feat: add scheduled job profile selector
+[296/565] reject_replay      60ed948f42    5.5s eta  45.5m  feat: add plugins visibility panel
+[297/565] reject_replay      66755b7fb1    4.9s eta  45.2m  feat: add insights token trends
+[298/565] reject_replay      71d0e91c6f    5.2s eta  45.0m  feat: virtualize session sidebar list
+[299/565] verified           46bdb3c1af    9.3s eta  44.8m  feat: add ctl daemon lifecycle script
+[300/565] reject_replay      d12b028c81    4.5s eta  44.6m  feat: add WebUI status command card
+[301/565] reject_replay      b2f35a41e1    4.4s eta  44.3m  fix: window long session message rendering
+[302/565] verified           7bf33431e4    8.8s eta  44.1m  docs: add WSL WebUI autostart helpers
+[303/565] verified           88bf62b6e4    8.9s eta  43.9m  feat: add native read-only Kanban panel
+[304/565] verified           eeb5dc545d    8.3s eta  43.8m  feat: add read-only Kanban API bridge
+[305/565] verified           ca135c2015    9.2s eta  43.6m  fix: harden persistent WebUI health checks
+[306/565] reject_replay      3ad8846a27    5.0s eta  43.3m  fix: show TPS in assistant message headers
+[307/565] reject_replay      259c5c4afb    4.6s eta  43.1m  feat: add Codex OAuth onboarding flow
+[308/565] reject_replay      876a670387    5.0s eta  42.9m  feat: add session save mode config
+[309/565] verified           cbfc544f50   15.0s eta  42.8m  fix(renderer): YAML/JSON/diff code blocks lose newlines (#
+[310/565] verified           66b925f59d    8.7s eta  42.6m  fix(cache): stamp /api/models disk cache with WebUI versio
+[311/565] verified           bea57beba9   10.2s eta  42.4m  fix(streaming): SSE heartbeat alignment, repair grace peri
+[312/565] verified           e8862632ed   10.5s eta  42.2m  fix(profiles): scope sessions, projects, and root-profile 
+[313/565] verified           1ad0ab42e5    7.9s eta  42.1m  Fix #1620: don't attach image on paste when clipboard also
+[314/565] verified           e9d7d5e427    8.1s eta  41.9m  fix: keep frontend routes under subpath mounts
+[315/565] verified           6c5bc95b3b    7.0s eta  41.7m  fix: broadcast SSE events to all tabs
+[316/565] verified           3369a08f37   11.4s eta  41.5m  fix(updates): use merge-base for compare URL so 'What's ne
+[317/565] verified           4174a7a860    7.9s eta  41.3m  fix: immediate syncTopbar on chat switch + sortable search
+[318/565] verified           f3fa106cd7    8.0s eta  41.1m  feat: show agent turn duration
+[319/565] verified           9ed0639319    8.0s eta  40.9m  fix: show first-turn chats in sidebar immediately
+[320/565] verified           458cf38ac9    8.6s eta  40.7m  fix(picker): collapse duplicate provider groups + guard pr
+[321/565] reject_post_failed 2a8311a788    8.0s eta  40.6m  fix(cron): scheduled jobs panel respects active profile
+[322/565] verified           a2b793be4f    9.1s eta  40.4m  fix(picker): Nous Portal featured-set cap + endpoint symme
+[323/565] verified           732c995d91   21.6s eta  40.4m  fix(#1560): refuse password change when HERMES_WEBUI_PASSW
+[324/565] verified           1d9a0cbba1    9.3s eta  40.2m  fix(P0 #1557): metadata-only Session.save() was wiping con
+[325/565] verified           0750da5b37    8.0s eta  40.0m  fix(models): structural OpenRouter free-tier visibility — 
+[326/565] verified           bff8cb2b58    9.0s eta  39.8m  fix: Nous Portal full live catalog + dropdown cache invali
+[327/565] verified           afaeb03532    8.3s eta  39.6m  fix: recover pending turn after stale stream restart
+[328/565] verified           e4d2704ce8    8.1s eta  39.4m  fix: resolve local models from configured base url
+[329/565] verified           c7e52084ba    7.8s eta  39.2m  Harden messaging channel handoff
+[330/565] verified           20ef643bb8    7.8s eta  39.1m  Add messaging session handoff summary
+[331/565] verified           dbb0879956    7.5s eta  38.9m  fix: pass WebUI max_tokens to agents
+[332/565] verified           6bce34c27e    7.6s eta  38.7m  fix: clear stale WebUI stream state
+[333/565] verified           6a75907802    7.7s eta  38.5m  feat(sidebar): add "Unassigned" project-filter chip for se
+[334/565] reject_pre_passed  6381ab1b8a    7.7s eta  38.3m  fix(model-picker): deepcopy auto_detected_models per group
+[335/565] reject_pre_passed  8f58688b66   14.0s eta  38.2m  test: lock /session/static MIME-type + auth fix; drop unus
+[336/565] verified           8f4692b8cf    9.1s eta  38.0m  fix(onboarding): allow keyless setup for self-hosted provi
+[337/565] verified           8616033605   18.5s eta  37.9m  fix(onboarding,providers): probe LM Studio /models + align
+[338/565] verified           d3c7ac182b    7.7s eta  37.7m  fix(providers): map lmstudio to LMSTUDIO_API_KEY in _PROVI
+[339/565] verified           51a87ebdc7    8.4s eta  37.5m  fix(sqlite): close state.db connections explicitly to stop
+[340/565] verified           cbb251b823    7.5s eta  37.4m  fix: add sidebar cancel for running sessions
+[341/565] verified           341b1ee6b6    8.5s eta  37.2m  fix(composer): distinct voice-mode icon, descriptive label
+[342/565] reject_post_failed 634f90a807    8.1s eta  37.0m  fix: validate WebUI launcher can import agent
+[343/565] verified           bcfd8b2eac    7.7s eta  36.8m  chore(release): stamp v0.50.268 — 4-PR batch + Opus follow
+[344/565] verified           5e806f6fd8    7.5s eta  36.6m  fix: restore inflight session on bfcache pageshow
+[345/565] verified           f84b6a4e2f   10.0s eta  36.4m  fix(bootstrap): add --foreground mode for process supervis
+[346/565] verified           3abae9aca7    7.6s eta  36.2m  chore(release): stamp v0.50.267 — 7 contributor PR batch +
+[347/565] verified           6f0c5d6e1a    7.6s eta  36.1m  fix: reuse inflight session stream
+[348/565] verified           7c4c0142d5    7.8s eta  35.9m  feat(api): add /api/session/duplicate endpoint for session
+[349/565] verified           c73f2ff387   18.4s eta  35.8m  v0.50.264 polish followups: i18n parity + assistant-output
+[350/565] verified           4ee9368464    7.7s eta  35.6m  Opus pre-release follow-ups for PR #1445
+[351/565] reject_post_failed 9de61a0b9a    9.7s eta  35.4m  feat: add opt-in webui extension hooks
+[352/565] verified           9e894a2555    7.4s eta  35.2m  fix: sync URL after session id rotation
+[353/565] verified           584974c9d2    8.7s eta  35.1m  fix(renderer): line-anchor fence regex to prevent mid-line
+[354/565] verified           081e600b33    8.8s eta  34.9m  fix: context-window indicator broken on older sessions (#1
+[355/565] verified           26d0f45791    7.7s eta  34.7m  fix: new-chat guard ignores in-flight streams (#1432) + pr
+[356/565] verified           a6884ca40f    7.9s eta  34.5m  Make composer-footer toolsets chip responsive instead of a
+[357/565] verified           b57525241b    8.0s eta  34.3m  v0.50.260: Docker reliability batch - PR #1428 + broader U
+[358/565] reject_post_failed c75ce33280    7.7s eta  34.1m  v0.50.259: Opus pre-release follow-up — close _session_db 
+[359/565] verified           399f12ac96    7.6s eta  34.0m  v0.50.258: Opus follow-up — fix multi-param redirect-encod
+[360/565] verified           f8007d43f3    7.6s eta  33.8m  v0.50.257: 4 Opus pre-release follow-ups + CHANGELOG + tes
+[361/565] verified           0f594ec714    7.6s eta  33.6m  fix: register 5 missing Lucide icons (TTS speaker + queue 
+[362/565] verified           5ce516ed38    7.8s eta  33.4m  v0.50.255: Opus follow-ups (4 fixes) + CHANGELOG
+[363/565] verified           e3a2b0b3d2    7.4s eta  33.2m  v0.50.254: Opus follow-up + CHANGELOG
+[364/565] verified           67193faf38    7.6s eta  33.0m  Apply Opus pre-release follow-ups for v0.50.253
+[365/565] verified           52bfceaa3b    8.3s eta  32.9m  Add /branch command to fork conversations from any message
+[366/565] verified           fea47bd986    7.9s eta  32.7m  Heal 'provider: local' mid-conversation crash for local-mo
+[367/565] verified           5c5ca7d2ef    9.8s eta  32.5m  Intercept CLI-only slash commands in WebUI (#1382)
+[368/565] verified           a6d831fc63    8.2s eta  32.3m  Cache /api/models/live with 60s TTL (#1378)
+[369/565] verified           d21c97205e    7.5s eta  32.1m  Harden streaming scroll unpin behavior (#1360) (#1377)
+[370/565] reject_pre_passed  f53556b3ff    7.6s eta  32.0m  fix(cancel-stream): rename tool_calls to _partial_tool_cal
+[371/565] verified           f14280e2c4    7.7s eta  31.8m  fix(#1195): route sessions to profile dir even when dir do
+[372/565] verified           c5f4f569d6    8.7s eta  31.6m  fix(#1361): preserve reasoning, tool calls, and partial ou
+[373/565] verified           89dcab8327    8.0s eta  31.4m  fix: persist manual cron run results (#1372)
+[374/565] verified           571cfed180   19.4s eta  31.3m  release: v0.50.251 (#1370 perf fix + orphan-parent guard +
+[375/565] verified           7da1e074e4    7.9s eta  31.2m  fix: expose session lineage metadata in API (#1370)
+[376/565] verified           bc10a229e3    7.4s eta  31.0m  release: v0.50.250
+[377/565] verified           604b44a254    7.5s eta  30.8m  fix(clarify-sse): inline snapshot under _lock to avoid dea
+[378/565] verified           d2d464aac3    9.1s eta  30.6m  feat(clarify): SSE long-connection for real-time clarify n
+[379/565] verified           6a736809ef    7.4s eta  30.4m  fix: sync active session across tabs (#1359)
+[380/565] verified           f13230f7cd    8.3s eta  30.3m  fix: collapse sidebar session lineage rows (#1358)
+[381/565] verified           e68f74ac99    8.2s eta  30.1m  fix(approval): close SSE notify-ordering, head-fidelity, a
+[382/565] verified           d6b9cfac23    7.5s eta  29.9m  release: v0.50.248
+[383/565] verified           932694aec6   11.6s eta  29.8m  feat(approval): SSE long-connection for real-time approval
+[384/565] verified           880350312a    7.5s eta  29.6m  fix(streaming): fallback to model_metadata for context_len
+[385/565] verified           eb678d5b54    7.6s eta  29.4m  feat(cron): auto-assign cron job sessions to dedicated 'Cr
+[386/565] verified           a5c10d594d    7.7s eta  29.2m  fix(streaming): persist context_length on session — comple
+[387/565] verified           d4b055c30b    8.5s eta  29.0m  fix(streaming+ui): preserve user message on cancel + persi
+[388/565] verified           1fa740d32f   18.6s eta  28.9m  feat(chat): render fenced code blocks in user messages (#1
+[389/565] verified           92121324a0    7.7s eta  28.8m  fix(models): exempt streaming sessions from Untitled+0-mes
+[390/565] verified           d0f6ee2ef9    8.5s eta  28.6m  fix(cron): import run_job inside _run_cron_tracked to fix 
+[391/565] verified           3f838fc31a    9.3s eta  28.4m  release: v0.50.244 (#1308)
+[392/565] verified           0ad95cb16a    7.9s eta  28.2m  release: v0.50.241 (#1293)
+[393/565] verified           33a145a669   16.0s eta  28.1m  release: v0.50.240
+[394/565] verified           0fe59831fe    7.2s eta  27.9m  tests: add regression tests + magic-byte image validation 
+[395/565] verified           1ed1ce219d    6.5s eta  27.8m  Preserve transcript across context compaction
+[396/565] verified           8a74ea89e7    7.4s eta  27.6m  fix: apply profile terminal env in webui sessions
+[397/565] verified           1fe9b76a3a   17.1s eta  27.5m  Add Portuguese (pt-BR) locale
+[398/565] verified           60a4cb057e    8.1s eta  27.3m  Add embedded workspace terminal
+[399/565] verified           b2771ebf69    7.3s eta  27.1m  feat: MCP server management UI (#538)
+[400/565] verified           49a2a424d5    7.8s eta  26.9m  feat: collapsible JSON/YAML tree viewer (#484)
+[401/565] verified           6f37da38a6    7.5s eta  26.8m  Clarify model scope in composer and settings
+[402/565] verified           eefa1bbad8    7.4s eta  26.6m  fix(models): preserve model cache metadata
+[403/565] verified           9a371f06f5    7.8s eta  26.4m  feat: inline diff/patch viewer (#483)
+[404/565] verified           103a9833d5    7.3s eta  26.2m  feat: workspace drag-to-reorder (#492)
+[405/565] verified           014f16c359    7.7s eta  26.0m  fix: harden session sidecar repair
+[406/565] verified           5d16ff7522    7.5s eta  25.9m  Fix background completion unread markers
+[407/565] verified           a8101d98f7   15.0s eta  25.7m  fix(models): deduplicate model IDs across provider groups 
+[408/565] verified           24b1e6f3fc    9.9s eta  25.6m  fix+feat: batch v0.50.236 — OAuth providers fix, profile s
+[409/565] verified           7189416969    7.9s eta  25.4m  fix: batch v0.50.234-235 — XSS hardening, workspace valida
+[410/565] verified           3780df9428   25.3s eta  25.3m  fix: batch v0.50.232 — fuzzy match, codex detection, works
+[411/565] verified           e61a405add   13.9s eta  25.2m  fix: batch v0.50.231 — macOS symlink bypass, workspace pan
+[412/565] verified           b24b0335f7    7.9s eta  25.0m  fix(models): defer first save() until session has real sta
+[413/565] verified           a091be6a8e   11.9s eta  24.9m  fix: batch v0.50.229 — session perf, ephemeral sessions, i
+[414/565] verified           ef26d19549    7.8s eta  24.7m  fix: batch v0.50.228 — renderer, model race, tool card, em
+[415/565] verified           8b8ff3328a   11.3s eta  24.5m  fix: batch triage — 12 contributor PRs (v0.50.227) (#1168)
+[416/565] reject_replay      dca8624454    3.9s eta  24.3m  fix(ui): restore rail-era app titlebar state (v0.50.226) (
+[417/565] verified           5192ca5de5    8.1s eta  24.2m  v0.50.225: cron attention, image lightbox, pytest isolatio
+[418/565] verified           69bf2878bc    7.3s eta  24.0m  v0.50.224: legacy @provider session models, Docker Hindsig
+[419/565] verified           fc0152b2fc    9.1s eta  23.8m  v0.50.223: model picker, idle retry, drag-drop, CSP, clipb
+[420/565] verified           4528c6c848    9.4s eta  23.7m  v0.50.222: Korean locale, provider fixes, reasoning chip b
+[421/565] verified           27b17a8fc8    9.0s eta  23.5m  v0.50.221: copy HTTP fix, inline images, mobile tap, custo
+[422/565] verified           d67036db24    7.8s eta  23.3m  v0.50.220: workspace panel collapse + project color dot fi
+[423/565] verified           d625bac6d4    7.6s eta  23.1m  v0.50.219: project chip context menu + input auto-sizing (
+[424/565] verified           62adc0c00d    7.6s eta  23.0m  v0.50.217: /queue /interrupt /steer send normally when age
+[425/565] verified           58ad315dca   31.6s eta  22.9m  v0.50.216: compression chains, renderer fixes, HTML previe
+[426/565] verified           3d96dc1498    8.8s eta  22.8m  v0.50.215: real /steer via agent.steer() — mid-turn correc
+[427/565] verified           520034c071    8.0s eta  22.6m  v0.50.214: busy input modes + queue/interrupt/steer slash 
+[428/565] verified           01404ac062    7.4s eta  22.4m  v0.50.211: compact timestamps, adaptive title refresh, set
+[429/565] verified           6c343aff84    9.4s eta  22.2m  v0.50.210: gpt-5.5, cron titles, agent cache, bfcache fix,
+[430/565] verified           7d1aa2e261    6.9s eta  22.1m  v0.50.209: check-for-updates, workspace toggle, HTML previ
+[431/565] verified           ad8e10304c    8.3s eta  21.9m  v0.50.207: batch of 10 PRs — TPS stat, SSE guard, session 
+[432/565] verified           4a882bec66    7.1s eta  21.7m  fix(auth): persist sessions across restarts via STATE_DIR/
+[433/565] verified           0a91e3cb02    6.9s eta  21.5m  fix: identify WebUI sessions as webui platform (#948)
+[434/565] verified           b072a6887c    6.9s eta  21.4m  fix(csp): add explicit manifest-src 'self' directive (#961
+[435/565] verified           970bc1d3fd    7.1s eta  21.2m  refactor(ui): three-column layout with left rail + main-vi
+[436/565] verified           1a9dba7844    7.3s eta  21.0m  fix: reasoning chip dropdown visible + monochrome SVG icon
+[437/565] verified           14a1924796    9.1s eta  20.8m  fix(streaming): respect auxiliary.title_generation config 
+[438/565] verified           89b0c8eb41    8.5s eta  20.7m  feat: incremental streaming markdown via streaming-markdow
+[439/565] verified           1011918d50    8.0s eta  20.5m  feat: add PWA support (manifest, service worker, install p
+[440/565] verified           1175ee363f    7.2s eta  20.3m  fix(models): duplicate dropdown entries, stale default mod
+[441/565] verified           537c8271db    7.1s eta  20.2m  fix(renderer): ordered list items always showed 1. — emit 
+[442/565] verified           9dd6e3f338    6.2s eta  20.0m  fix(cancel): preserve partial streamed response on Stop Ge
+[443/565] verified           4089972b09   27.2s eta  19.9m  fix(models): preserve @nous: prefix in settings + fix cros
+[444/565] verified           b82954ee70    7.4s eta  19.7m  feat(ui): session attention indicators — streaming spinner
+[445/565] verified           62c56175b7    6.7s eta  19.5m  feat(workspaces): autocomplete trusted workspace paths — v
+[446/565] verified           04b00065f9    8.0s eta  19.4m  feat: provider key management from Settings — v0.50.159 (P
+[447/565] verified           0a75b3f1d3    6.8s eta  19.2m  fix: Nous portal model IDs + portal provider routing guard
+[448/565] verified           558b1730a6    6.8s eta  19.0m  fix: thinking card no longer mirrors main response — v0.50
+[449/565] verified           201235d807    7.0s eta  18.8m  fix: live-fetched portal models route through configured p
+[450/565] verified           256b3fbbdf    7.2s eta  18.7m  fix: image_generate renders inline + auto-title strips thi
+[451/565] verified           5fa731ea4a    8.0s eta  18.5m  release: v0.50.151 — credential_pool provider detection + 
+[452/565] verified           db57c47ff3    7.3s eta  18.3m  fix(ui): slash command input now echoed as user message in
+[453/565] verified           9b628c27ab    6.6s eta  18.2m  fix(ui): scroll selected item into view on slash command d
+[454/565] verified           11fd0d8412    6.7s eta  18.0m  feat(tasks): refresh button in cron panel + auto-refresh o
+[455/565] verified           24fc9d4155    7.2s eta  17.8m  feat(appearance): font size setting with Small/Default/Lar
+[456/565] verified           880085a09e    6.7s eta  17.6m  fix(ui): clear session search on boot + autocomplete=off +
+[457/565] verified           d41d05ea36    6.8s eta  17.5m  fix(workspace): _profileDefaultWorkspace persists after ne
+[458/565] verified           859602340e    7.5s eta  17.3m  fix: streaming race conditions (#631) + blank-page workspa
+[459/565] verified           8f1f582caf    8.0s eta  17.1m  fix: BYOK/custom provider models missing from WebUI model 
+[460/565] verified           a4d59b9e6c    8.7s eta  17.0m  fix: update banner — conflict recovery path + server self-
+[461/565] verified           811424a87b    7.9s eta  16.8m  feat(reasoning): full /reasoning CLI parity — show|hide + 
+[462/565] verified           f6e1612c7e   10.4s eta  16.6m  fix: periodic session checkpoint during streaming — v0.50.
+[463/565] verified           312a493a72    6.8s eta  16.5m  fix(sessions): new sessions appear immediately in sidebar 
+[464/565] verified           3246b263d9    7.4s eta  16.3m  fix(profiles): complete profile isolation via cookie + thr
+[465/565] verified           bbc917a5c6    8.5s eta  16.1m  fix(renderer): stop &quot; mangling inside code blocks (#8
+[466/565] verified           cbb4ba3f28    7.7s eta  16.0m  fix(profiles): profile isolation — new_session uses per-re
+[467/565] verified           49ff8b3185    7.4s eta  15.8m  fix: bootstrap.py loads REPO_ROOT/.env so direct invocatio
+[468/565] verified           38e215e8f8    8.0s eta  15.6m  fix: dynamic version badge — read from git tag, never hard
+[469/565] verified           28b4777b5a    6.6s eta  15.4m  fix(ui): hide duplicate close button in workspace header a
+[470/565] verified           b6d335feaa    7.5s eta  15.3m  perf: TTL cache for model list + incremental session index
+[471/565] verified           a7e8b1ab83    7.1s eta  15.1m  fix(streaming): eagerly release session lock in cancel_str
+[472/565] verified           98cd318413    6.2s eta  14.9m  fix(sessions): surface get_cli_sessions() failures via log
+[473/565] verified           94a04ddd40    6.4s eta  14.8m  fix(ui): persist session queue to sessionStorage across pa
+[474/565] verified           765d8520d4    6.5s eta  14.6m  fix(streaming): quota error detection, error persistence, 
+[475/565] verified           f35ac3a727    6.1s eta  14.4m  fix(ui): streamline slash sub-argument autocomplete (#771)
+[476/565] verified           0dd5d6f21c    6.8s eta  14.3m  feat(ui): add sidebar density mode to session list (#764)
+[477/565] verified           711d8bb6c0    6.9s eta  14.1m  fix(ui): hover-only footer chrome with timestamps for both
+[478/565] verified           aa767d28d0    7.2s eta  13.9m  fix(renderer): preserve newlines in code blocks during par
+[479/565] verified           c68420d9aa    6.0s eta  13.7m  fix(ui): constrain slash autocomplete width to composer — 
+[480/565] verified           aa78175cca    6.0s eta  13.6m  fix(ui): restrict edit to latest user message (#747)
+[481/565] verified           067d96bb30    6.2s eta  13.4m  feat: add full Russian (ru-RU) localization — v0.50.95 (PR
+[482/565] verified           877a32f49c    6.7s eta  13.2m  fix: XML tool-call leak + workspace empty-state + notifica
+[483/565] verified           0386dc261a    8.9s eta  13.1m  feat: slash command parity + skill autocomplete — v0.50.91
+[484/565] verified           352354790f    6.4s eta  12.9m  fix: streaming scroll override, Gemini 3.x models, read-on
+[485/565] verified           75e6595e06    7.0s eta  12.7m  feat: add MiniMax M2.7 to fallback model list and fix env 
+[486/565] verified           20a5f48a1f    6.5s eta  12.6m  fix(config): load provider models from config.yaml in mode
+[487/565] verified           b49de92893    6.0s eta  12.4m  feat(/compress): manual session compression with focus top
+[488/565] reject_pre_passed  ec48c482e2    6.4s eta  12.2m  fix(config): default model empty string — no unavailable O
+[489/565] verified           bded1cf906    6.9s eta  12.1m  fix(streaming): strip Gemma 4 thinking token delimiter in 
+[490/565] verified           79428f93c6    7.1s eta  11.9m  fix: catch OSError from SETTINGS_FILE.exists() — Docker UI
+[491/565] verified           692ba68e42    6.7s eta  11.7m  fix(title): strip markdown labels and skip empty placehold
+[492/565] reject_post_failed 2484409b7a    6.6s eta  11.6m  fix: HERMES_WEBUI_DEFAULT_WORKSPACE wins over settings.jso
+[493/565] verified           9a3dc10d93    6.0s eta  11.4m  feat: redesign chat transcript + fix streaming/persistence
+[494/565] verified           25d38a467a    6.1s eta  11.2m  fix: Docker UID/GID auto-detect from workspace mount + mes
+[495/565] verified           6c5911a79f    6.3s eta  11.1m  fix: light theme dialogs, workspace panel snap, model cach
+[496/565] verified           a512f2020e    7.1s eta  10.9m  feat: MCP toolsets in WebUI + onboarding fix for non-stand
+[497/565] verified           3e1ba1b783    6.7s eta  10.7m  fix(models): show named custom provider label in model dro
+[498/565] verified           d6b58b9ce0    7.2s eta  10.6m  fix: queue simultaneous approval requests per session (fix
+[499/565] verified           9220a876bc    6.8s eta  10.4m  fix: strip orphaned tool messages before sending history t
+[500/565] verified           74dee6b665    6.0s eta  10.3m  fix: respect IME composition in Enter submit flows
+[501/565] reject_pre_passed  ccba2f5c01    4.9s eta  10.1m  feat: harden clarify dialog flow and refresh recovery
+[502/565] verified           7b9f08c774    6.2s eta   9.9m  fix: suppress N/A source_tag in session list sidebar (#429
+[503/565] reject_pre_passed  2810233af4    6.0s eta   9.8m  fix(renderer): extend _al_stash to include <img> tags, pre
+[504/565] verified           887893ecd1    7.3s eta   9.6m  fix: code-in-table CSS sizing + markdown image rendering (
+[505/565] verified           85f1017514    5.9s eta   9.4m  fix(csp): allow cdn.jsdelivr.net for font-src so KaTeX fon
+[506/565] verified           0a570ada87    6.3s eta   9.3m  fix(renderer): prevent double-linking and esc() corruption
+[507/565] verified           0349df6ee4    7.3s eta   9.1m  feat(ui): render MEDIA: images inline in web UI chat (fixe
+[508/565] verified           3776b09f4a    5.9s eta   8.9m  fix(ui): active session title uses var(--gold) instead of 
+[509/565] reject_post_failed 8b857d9efc    8.1s eta   8.8m  login-module-patch: sync to v0.50.36-local.1
+[510/565] reject_post_failed c4efe96725    8.8s eta   8.6m  feat(i18n): complete zh-CN hardening and locale consistenc
+[511/565] reject_post_failed db392bd532    6.2s eta   8.5m  feat(ui): remove mobile bottom nav on phones
+[512/565] verified           57a50591ee    7.1s eta   8.3m  fix(onboarding): skip wizard if Hermes already configured
+[513/565] verified           a5abe51cc5    6.3s eta   8.1m  fix: workspace panel close button — no duplicate X on desk
+[514/565] verified           d3fea34c41    9.8s eta   8.0m  fix: correct tool call card rendering on session load afte
+[515/565] verified           1345ccccee    7.4s eta   7.8m  feat: relative time labels in session sidebar (#406)
+[516/565] verified           4de4ed9a15    6.1s eta   7.7m  fix(sessions): redact sensitive titles in session list and
+[517/565] verified           04ed0ff43d    5.9s eta   7.5m  v0.50.25: mobile scroll, import timestamps, profile securi
+[518/565] verified           2beebaa6a2    6.9s eta   7.3m  feat: opt-in chat bubble layout (closes #336) (#403)
+[519/565] verified           12a60faaee    6.6s eta   7.2m  fix: add OpenCode Zen and Go provider support (closes #362
+[520/565] reject_pre_passed  2acee7fc34    7.1s eta   7.0m  fix: onboarding unblocked for reverse proxy / SSH tunnel d
+[521/565] verified           7a80e73eb2    6.8s eta   6.9m  fix: silent agent errors, stale model list, live model fet
+[522/565] verified           68426124c5    6.8s eta   6.7m  fix: recover from invalid default workspace paths (#366)
+[523/565] verified           a6484f69a8    6.5s eta   6.5m  fix: Docker uv pre-install at build time + workspace permi
+[524/565] verified           d0e08fee88    7.1s eta   6.4m  feat: KaTeX math rendering for LaTeX in chat + workspace p
+[525/565] verified           dd17a0e9b7    6.7s eta   6.2m  security: bandit fixes B310/B324/B110 + QuietHTTPServer (#
+[526/565] verified           04401787ec    6.2s eta   6.1m  fix: inject SessionDB into AIAgent for WebUI sessions — en
+[527/565] verified           88dc8bbe26    6.5s eta   5.9m  fix: isolate profile .env secrets on switch (#351)
+[528/565] verified           63fb22b7ee    6.1s eta   5.7m  fix: add table styles to .msg-body for readable bordered c
+[529/565] verified           05f09012a5    6.3s eta   5.6m  feat: autolink plain URLs in chat messages (fixes #342) (#
+[530/565] verified           1c0d13c6d9    6.4s eta   5.4m  fix: title auto-generation + mobile close button (PR #333)
+[531/565] verified           2fc19a8326    7.0s eta   5.3m  feat: OAuth provider onboarding path — Codex/Copilot no lo
+[532/565] verified           7d9d7e7b66    7.0s eta   5.1m  feat: HERMES_WEBUI_SKIP_ONBOARDING env var + synchronous k
+[533/565] verified           9c44d0cf3e    6.3s eta   5.0m  fix: strip think tags when model emits leading whitespace 
+[534/565] verified           2b21bb68b8    6.2s eta   4.8m  feat: workspace panel state persists across refreshes (#32
+[535/565] verified           bd3ec45aa9    6.2s eta   4.6m  fix: cancel cleanup no longer depends on SSE event (closes
+[536/565] verified           28a0f0bef9    6.3s eta   4.5m  fix+feat: session title guard + breadcrumb nav + wider pan
+[537/565] verified           a13a1e0b9e    7.7s eta   4.3m  fix: recognize OAuth providers as ready in onboarding (clo
+[538/565] verified           0d98116b37    6.7s eta   4.2m  fix: improve self-update git pull diagnostics (#287)
+[539/565] reject_post_failed 31a721417e   11.9s eta   4.0m  feat(onboarding): add one-shot bootstrap and first-run set
+[540/565] verified           42dd2b562d    6.8s eta   3.9m  fix: warn on provider/model mismatch, surface auth errors 
+[541/565] reject_post_failed 711bb5a6c9    9.0s eta   3.7m  feat: real-time gateway session sync (Phase 1) (#274)
+[542/565] verified           eca6f5efbd    6.0s eta   3.6m  feat(i18n): add Spanish locale for WebUI (#275)
+[543/565] verified           b86ace6ce3    6.6s eta   3.4m  v0.47.0: dialogs, session menu, /skills, mobile fixes, mob
+[544/565] reject_post_failed 27c2fd6c08    6.3s eta   3.2m  v0.46.0: security, Docker UID/GID, model discovery, i18n, 
+[545/565] reject_post_failed da160d675f    6.9s eta   3.1m  feat: custom endpoint fields in new profile form (fixes #1
+[546/565] verified           4947a6b0c3    8.0s eta   2.9m  v0.44.0: approval fix, login CSP, update diagnostics, Luci
+[547/565] verified           e59fedd351    4.8s eta   2.8m  feat: auto-install missing agent deps on startup (#215)
+[548/565] verified           011034dc71   19.4s eta   2.6m  feat: optional HTTPS/TLS support via cert and key env vars
+[549/565] verified           fdf6ebfbe6    5.4s eta   2.5m  fix(auth): prune expired sessions on every verify to preve
+[550/565] verified           80b26c7c72    6.3s eta   2.3m  fix: surface approval prompt in UI instead of getting stuc
+[551/565] reject_post_failed a064542df9   16.4s eta   2.2m  release: v0.39.0 — security hardening, 12 fixes (#171)
+[552/565] reject_post_failed 58eb6e7fd5    7.9s eta   2.0m  feat: /personality slash command with backend integration 
+[553/565] verified           71dd691ed0    5.1s eta   1.9m  fix: harden bot_name — crash guard, XSS escape, sanitizati
+[554/565] verified           e829fa50d5    5.3s eta   1.7m  fix: OpenRouter models stripped of prefix, causing 404 (#1
+[555/565] verified           96137750a4    5.1s eta   1.5m  feat: Sprint 26 — pluggable UI themes (dark, light, solari
+[556/565] verified           df06c1cdca    5.0s eta   1.4m  feat: Sprint 23 — agentic transparency + polish
+[557/565] verified           3520fa5643    4.4s eta   1.2m  feat: Sprint 23 -- profile/workspace/model coherence
+[558/565] reject_post_failed dcb21dfd37    5.7s eta   1.1m  feat: polish send button — hidden until content, icon-circ
+[559/565] verified           efb7293ae8    6.2s eta   0.9m  feat: add voice input mic button via Web Speech API
+[560/565] verified           b8b62722ec    5.8s eta   0.8m  feat: Sprint 19 — password auth, security headers, login p
+[561/565] verified           0f2bd537f1    4.8s eta   0.6m  feat: Sprint 17 -- workspace breadcrumbs, slash commands, 
+[562/565] verified           0be7ccde4c    6.2s eta   0.5m  feat: safe HTML rendering in AI responses + active session
+[563/565] verified           1a4793848e    5.4s eta   0.3m  feat: Sprint 15 — session projects, code copy button, tool
+[564/565] verified           7019c25021   11.5s eta   0.2m  Hermes Web UI — Sprints 11-14: multi-provider models, sett
+[565/565] reject_replay      a4e2174c29    0.0s eta   0.0m  Hermes WebUI v0.1.0 — initial public release
+
+gate ran       : 565
+  verified              478
+  reject_replay          50
+  reject_post_failed     23
+  reject_pre_passed      14
+mean wall/commit: 9.2s
+wrote data/hermes-webui-all/verdicts.jsonl
+GATE_EXIT=0

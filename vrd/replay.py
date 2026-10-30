@@ -64,6 +64,14 @@ class TestResult:
     duration_s: float = 0.0
     returncode: int | None = None
     output_tail: str = ""
+    # nodeid -> "passed" | "failed" | "error" | "skipped"
+    # Populated from JUnit XML so the gate can reason about individual test
+    # transitions instead of trusting one suite-level exit code.
+    tests: dict[str, str] = field(default_factory=dict)
+
+    @property
+    def outcome_set(self) -> dict[str, str]:
+        return dict(self.tests)
 
     @property
     def green(self) -> bool:
@@ -81,6 +89,14 @@ class Verdict:
     test_files: list[str] = field(default_factory=list)
     source_files: list[str] = field(default_factory=list)
     wall_s: float = 0.0
+    # Strict-mode evidence. A suite-level "red before, green after" can be a
+    # flaky test or an unrelated failure; these fields record what actually
+    # transitioned so a verdict can be audited after the fact.
+    fail_to_pass: list[str] = field(default_factory=list)
+    pass_to_pass: int = 0
+    regressions: list[str] = field(default_factory=list)
+    flaky: list[str] = field(default_factory=list)
+    strict: bool = False
 
 
 # ── Environment reconstruction ─────────────────────────────────────────────
@@ -199,10 +215,48 @@ def parse_pytest_summary(output: str, duration: float, rc: int) -> TestResult:
     return res
 
 
+def parse_junit(path: Path) -> dict[str, str]:
+    """nodeid -> outcome, from a pytest JUnit XML report.
+
+    pytest's tail line only counts outcomes; it cannot say *which* tests moved.
+    A gate that cannot name the test that flipped cannot tell a real fix from a
+    coincidentally-red suite, so we parse the XML.
+    """
+    import xml.etree.ElementTree as ET
+
+    outcomes: dict[str, str] = {}
+    if not path.exists():
+        return outcomes
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError:
+        return outcomes
+    for case in root.iter("testcase"):
+        classname = case.get("classname") or ""
+        name = case.get("name") or ""
+        nodeid = f"{classname}::{name}" if classname else name
+        outcome = "passed"
+        for child in case:
+            tag = child.tag
+            if tag in ("failure", "error"):
+                outcome = "failed" if tag == "failure" else "error"
+                break
+            if tag == "skipped":
+                outcome = "skipped"
+                break
+        outcomes[nodeid] = outcome
+    return outcomes
+
+
 def run_pytest(tree: Path, venv: Path, test_paths: list[str], sandbox: Path,
-               preset: str | None, timeout: int = PYTEST_TIMEOUT) -> TestResult:
+               preset: str | None, timeout: int = PYTEST_TIMEOUT,
+               junit: Path | None = None) -> TestResult:
     env = hermetic_env(sandbox, preset, {"PYTHONPATH": str(tree)})
     cmd = [str(venv / "bin/python"), "-m", "pytest", *test_paths, "-q", "-p", "no:cacheprovider"]
+    if junit is not None:
+        junit.parent.mkdir(parents=True, exist_ok=True)
+        junit.unlink(missing_ok=True)
+        cmd.append(f"--junitxml={junit}")
     t0 = time.time()
     try:
         proc = subprocess.run(cmd, cwd=str(tree), env=env, capture_output=True, text=True, timeout=timeout)
@@ -211,9 +265,14 @@ def run_pytest(tree: Path, venv: Path, test_paths: list[str], sandbox: Path,
         res = parse_pytest_summary(out if isinstance(out, str) else out.decode(errors="replace"),
                                    time.time() - t0, 124)
         res.output_tail = f"TIMEOUT after {timeout}s\n" + res.output_tail
+        if junit is not None:
+            res.tests = parse_junit(junit)
         return res
     out = proc.stdout + proc.stderr
-    return parse_pytest_summary(out, time.time() - t0, proc.returncode)
+    res = parse_pytest_summary(out, time.time() - t0, proc.returncode)
+    if junit is not None:
+        res.tests = parse_junit(junit)
+    return res
 
 
 def detect_toolchain(tree: Path) -> str:
@@ -299,14 +358,14 @@ def parse_go_summary(output: str, duration: float, rc: int) -> TestResult:
 
 
 def run_tests(tree: Path, test_paths: list[str], sandbox: Path, preset: str | None,
-              cache_root: Path) -> tuple[TestResult, str]:
+              cache_root: Path, junit: Path | None = None) -> tuple[TestResult, str]:
     """Dispatch to the right runner. Returns (result, env_description)."""
     toolchain = detect_toolchain(tree)
     if toolchain == "go":
         return run_go_tests(tree, test_paths, sandbox, cache_root), "go-modcache-shared"
     if toolchain == "python":
         venv, key = build_venv(tree, cache_root)
-        return run_pytest(tree, venv, test_paths, sandbox, preset), f"python-{key}"
+        return run_pytest(tree, venv, test_paths, sandbox, preset, junit=junit), f"python-{key}"
     return TestResult(ran=False, returncode=None, output_tail=f"unsupported toolchain: {toolchain}"), "none"
 
 
@@ -344,10 +403,41 @@ def _git_show_to_file(repo: GitRepo, sha: str, path: str, dest: Path) -> None:
 # ── The gate ───────────────────────────────────────────────────────────────
 
 
+def classify_transitions(pre_tests: dict[str, str],
+                         post_tests: dict[str, str]) -> tuple[list[str], int, list[str]]:
+    """Compare per-test outcomes across the two arms.
+
+    Returns (fail_to_pass, pass_to_pass_count, regressions).
+
+    This is the strict rule in one place: a commit is only interesting if a
+    named test moved from red to green, and it is only acceptable if nothing
+    that was green went red.
+    """
+    f2p = sorted(
+        t for t, o in post_tests.items()
+        if o == "passed" and pre_tests.get(t) in ("failed", "error")
+    )
+    p2p = sum(1 for t, o in post_tests.items() if o == "passed" and pre_tests.get(t) == "passed")
+    regressions = sorted(
+        t for t, o in post_tests.items()
+        if o in ("failed", "error") and pre_tests.get(t) == "passed"
+    )
+    return f2p, p2p, regressions
+
+
 def counterfactual_verify(repo: GitRepo, commit: Commit, cache_root: Path,
                           scratch_root: Path, preset: str | None = "hermes-webui",
-                          keep: bool = False) -> Verdict:
-    """Run the two-sided gate on one candidate commit."""
+                          keep: bool = False, strict: bool = False,
+                          repeats: int = 1) -> Verdict:
+    """Run the two-sided gate on one candidate commit.
+
+    Default mode is the original suite-level rule: red before, green after.
+
+    ``strict=True`` additionally demands, per SWE-bench's construction, that at
+    least one *named* test transitions fail->pass and that no previously-passing
+    test regresses. ``repeats>1`` re-runs the post arm and flags any test whose
+    outcome is not stable, which is how a flaky test masquerades as a fix.
+    """
     t_start = time.time()
     tests = [p for p in commit.added_tests if is_test_path(p)]
     verdict = Verdict(
@@ -374,7 +464,8 @@ def counterfactual_verify(repo: GitRepo, commit: Commit, cache_root: Path,
                 dest = tree / t
                 _git_show_to_file(repo, commit.sha, t, dest)
                 injected.append(t)
-            pre, env_desc = run_tests(tree, injected, sandbox, preset, cache_root)
+            pre, env_desc = run_tests(tree, injected, sandbox, preset, cache_root,
+                                      junit=sandbox / f"pre-{commit.sha[:12]}.xml")
             verdict.detail = f"env={env_desc}"
             verdict.pre = pre
 
@@ -394,13 +485,38 @@ def counterfactual_verify(repo: GitRepo, commit: Commit, cache_root: Path,
                 verdict.wall_s = time.time() - t_start
                 return verdict
 
-            post, _ = run_tests(tree, injected, sandbox, preset, cache_root)
+            post, _ = run_tests(tree, injected, sandbox, preset, cache_root,
+                                junit=sandbox / f"post-{commit.sha[:12]}.xml")
             verdict.post = post
+
+            # ── flakiness probe: identical inputs must give identical outcomes ──
+            if repeats > 1:
+                unstable: set[str] = set()
+                for run_i in range(repeats - 1):
+                    again, _ = run_tests(tree, injected, sandbox, preset, cache_root,
+                                         junit=sandbox / f"post{run_i + 2}-{commit.sha[:12]}.xml")
+                    for nodeid, outcome in post.tests.items():
+                        if again.tests.get(nodeid, outcome) != outcome:
+                            unstable.add(nodeid)
+                verdict.flaky = sorted(unstable)
+
+        if pre.tests and post.tests:
+            f2p, p2p, reg = classify_transitions(pre.tests, post.tests)
+            verdict.fail_to_pass = f2p
+            verdict.pass_to_pass = p2p
+            verdict.regressions = reg
+        verdict.strict = strict
 
         if pre.green:
             verdict.status = "reject_pre_passed"
         elif not post.green:
             verdict.status = "reject_post_failed"
+        elif strict and verdict.flaky:
+            verdict.status = "reject_flaky"
+        elif strict and not verdict.fail_to_pass:
+            verdict.status = "reject_no_transition"
+        elif strict and verdict.regressions:
+            verdict.status = "reject_regression"
         else:
             verdict.status = "verified"
     except Exception as exc:  # replay failure must never look like a verification
@@ -416,14 +532,16 @@ def counterfactual_verify(repo: GitRepo, commit: Commit, cache_root: Path,
 
 def verify_many(repo_path: str | Path, commits: list[Commit], cache_root: str | Path,
                 scratch_root: str | Path, preset: str | None = "hermes-webui",
-                limit: int | None = None, progress=None) -> list[Verdict]:
+                limit: int | None = None, progress=None, strict: bool = False,
+                repeats: int = 1) -> list[Verdict]:
     repo = GitRepo(repo_path)
     cache_root = Path(cache_root)
     scratch_root = Path(scratch_root)
     results: list[Verdict] = []
     todo = [c for c in commits if c.candidate][: limit or None]
     for i, commit in enumerate(todo, 1):
-        verdict = counterfactual_verify(repo, commit, cache_root, scratch_root, preset=preset)
+        verdict = counterfactual_verify(repo, commit, cache_root, scratch_root,
+                                        preset=preset, strict=strict, repeats=repeats)
         results.append(verdict)
         if progress:
             progress(i, len(todo), verdict)

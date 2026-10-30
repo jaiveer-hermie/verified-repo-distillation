@@ -89,6 +89,8 @@ def cmd_gate(args: argparse.Namespace) -> int:
     verdicts = verify_many(
         args.repo, commits, cache_root=args.cache, scratch_root=args.scratch,
         preset=args.preset, limit=args.limit, progress=progress,
+        strict=getattr(args, "strict", False),
+        repeats=getattr(args, "repeats", 1),
     )
     if args.retry and out_path.exists():
         # merge: replace only the retried shas, keep every prior decision intact
@@ -385,6 +387,11 @@ def main(argv: list[str] | None = None) -> int:
                         help="env preset from vrd.replay.ENV_PRESETS, or 'none'")
     p_gate.add_argument("--cache", default=str(Path.home() / ".cache/vrd"))
     p_gate.add_argument("--scratch", default=str(Path.home() / ".cache/vrd/work"))
+    p_gate.add_argument("--strict", action="store_true",
+                        help="require a named fail->pass test, no regressions, and "
+                             "stable outcomes across --repeats runs (SWE-bench semantics)")
+    p_gate.add_argument("--repeats", type=int, default=1,
+                        help="post-arm reruns used to detect flaky tests (needs --strict)")
     p_gate.add_argument("--retry", default=None,
                         help="path to an existing verdicts.jsonl; only retry reject_replay entries")
     p_gate.set_defaults(func=cmd_gate)

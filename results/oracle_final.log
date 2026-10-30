@@ -1,0 +1,47 @@
+oracle: 76 pairs -> 43 in scope (<= 2 files, <= 6000 patch bytes)
+  [1/43] OK   c26e2541 applies=1 pass=1   5.5s fix: clarify sidebar session tooltips
+  [2/43] OK   d6c1b696 applies=1 pass=1   6.0s fix(reasoning): expose effort levels for bar
+  [3/43] OK   9458df6f applies=1 pass=1   5.9s fix: dedupe sidebar completion session ids
+  [4/43] OK   71e6eabb applies=1 pass=1   5.8s fix: let cron sessions bypass CLI_VISIBLE_SE
+  [5/43] OK   b3483d94 applies=1 pass=1   5.6s fix: close evicted agents from WebUI cache
+  [6/43] OK   d2686eae applies=1 pass=1   5.9s fix: honor shared OpenCode key at runtime
+  [7/43] OK   da9211bf applies=1 pass=1   7.0s fix(session): copy all critical fields on du
+  [8/43] OK   39f09a5b applies=1 pass=1   6.4s fix: read skills disabled state from active 
+  [9/43] OK   f5dc9477 applies=1 pass=1   5.2s fix: submit composer on numpad enter
+  [10/43] OK   c197e0c0 applies=1 pass=1   5.2s fix: allow current-pane SSE reconnect when u
+  [11/43] OK   c1942a1c applies=1 pass=1   6.7s fix(sessions): widen #3023 to all 5 session-
+  [12/43] OK   38905f33 applies=1 pass=1   5.3s fix: preserve messageful sidebar discoverabi
+  [13/43] OK   b14ef773 applies=1 pass=1   5.5s Fix workspace save icon contrast
+  [14/43] OK   74fe79dd applies=1 pass=1   5.5s fix(reasoning): use agent metadata for effor
+  [15/43] OK   3a9948d6 applies=1 pass=1   5.9s Fix streaming SessionDB profile path
+  [16/43] OK   fceb2552 applies=1 pass=1   6.2s fix(session): anchor message windows on rend
+  [17/43] OK   0db8f5de applies=1 pass=1   7.6s fix(terminal): harden supervisor lifecycle a
+  [18/43] OK   524ed6cc applies=1 pass=1   5.6s fix(streaming): preserve profile env for che
+  [19/43] OK   e2653891 applies=1 pass=1   5.4s perf(sessions): prime missing index in backg
+  [20/43] OK   5b9484b8 applies=1 pass=1   5.6s fix(streaming): suppress visible progress ec
+  [21/43] OK   c616c8e7 applies=1 pass=1   5.6s fix: cap live tool prompt estimates
+  [22/43] OK   b0f7a7bd applies=1 pass=1   5.3s feat: add PWA sidebar edge swipe
+  [23/43] OK   2419b3a0 applies=1 pass=1   6.2s Stage 404: PR #2830 — fix(sessions): keep pi
+  [24/43] OK   70402f96 applies=1 pass=1   5.6s fix(workspace): fall back for large markdown
+  [25/43] OK   67a20477 applies=1 pass=1   6.0s fix(csrf): clarify rejection diagnostics
+  [26/43] OK   618e1a5d applies=1 pass=1   6.2s fix(server): tolerate malformed request logg
+  [27/43] OK   d20da832 applies=1 pass=1   7.4s fix(static): tighten cache validators and 30
+  [28/43] OK   160cd03c applies=1 pass=1   5.2s fix(chat): reset reasoning accumulator per t
+  [29/43] OK   1f56fad7 applies=1 pass=1   5.7s fix(chat): flush pending render before segme
+  [30/43] OK   d7f1514d applies=1 pass=1   5.1s fix(models): surface bedrock provider in Web
+  [31/43] OK   12becd1f applies=1 pass=1   5.2s fix(chat): rename _inflightStateLimits() to 
+  [32/43] OK   af1ee81f applies=1 pass=1   5.2s fix(chat): resolve session model before acti
+  [33/43] OK   4153a47d applies=1 pass=1   5.5s feat: new_session() reads display.personalit
+  [34/43] OK   dabe7b0e applies=1 pass=1   5.1s fix(session): keep conversation actions menu
+  [35/43] OK   f81d24ec applies=1 pass=1   5.0s fix(chat): resync sidebar after panel switch
+  [36/43] OK   80356c3a applies=1 pass=1   5.1s Stage 400: PR #2709 — fix(model): prefer pro
+  [37/43] OK   cc36711b applies=1 pass=1   5.2s Stage 400: PR #2710 — fix: render streamed m
+  [38/43] OK   3874781a applies=1 pass=1   5.8s Stage 399: PR #2704 — fix(streaming): preven
+  [39/43] OK   8e1ac89b applies=1 pass=1   5.2s Stage 397: PR #2692 — fix(ui): invalidate tr
+  [40/43] OK   3dd2ace4 applies=1 pass=1   5.1s Stage 397: PR #2689 — fix(chat): preserve in
+  [41/43] OK   6e64068f applies=1 pass=1   5.5s fix: cap CLI session sidebar state scans
+  [42/43] OK   bc764827 applies=1 pass=1   5.4s fix: preserve provider for configured model 
+  [43/43] OK   71d8a8fb applies=1 pass=1   5.4s fix: reap terminal shells on shutdown
+
+oracle: 43/43 gold answers scored as solved (100%)
+ORACLE_EXIT=0

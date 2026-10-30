@@ -1,0 +1,22 @@
+{
+  "summary": {
+    "arms": {
+      "A": {
+        "n": 26,
+        "passed": 3,
+        "pass_rate": 0.1154,
+        "ci95": [
+          0.04,
+          0.2898
+        ],
+        "applies_rate": 0.3846,
+        "mean_generated_bytes": 5474.5
+      }
+    },
+    "n_commits": {
+      "A": 26
+    }
+  },
+  "model": "vrd",
+  "n_pairs": 26
+}

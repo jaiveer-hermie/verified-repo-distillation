@@ -1,0 +1,17 @@
+{
+  "commits_total": 3526,
+  "kept": 1813,
+  "dropped": 1713,
+  "drop_reasons": {
+    "merge": 1127,
+    "docs-only": 316,
+    "tests-only": 121,
+    "bookkeeping-subject": 89,
+    "too-large": 51,
+    "too-many-files": 5,
+    "empty": 2,
+    "generated-file": 1,
+    "root-commit": 1
+  },
+  "gate_candidates": 514
+}

@@ -1,0 +1,30 @@
+oracle: 34 pairs -> 26 in scope (<= 2 files, <= 6000 patch bytes)
+  [1/26] OK   d6c1b696 applies=1 pass=1   7.0s fix(reasoning): expose effort levels for bar
+  [2/26] OK   71e6eabb applies=1 pass=1   5.7s fix: let cron sessions bypass CLI_VISIBLE_SE
+  [3/26] OK   b3483d94 applies=1 pass=1   6.3s fix: close evicted agents from WebUI cache
+  [4/26] OK   da9211bf applies=1 pass=1   7.1s fix(session): copy all critical fields on du
+  [5/26] OK   39f09a5b applies=1 pass=1   6.4s fix: read skills disabled state from active 
+  [6/26] OK   c1942a1c applies=1 pass=1   6.9s fix(sessions): widen #3023 to all 5 session-
+  [7/26] OK   38905f33 applies=1 pass=1   5.5s fix: preserve messageful sidebar discoverabi
+  [8/26] OK   74fe79dd applies=1 pass=1   5.5s fix(reasoning): use agent metadata for effor
+  [9/26] OK   fceb2552 applies=1 pass=1   6.1s fix(session): anchor message windows on rend
+  [10/26] OK   0db8f5de applies=1 pass=1   6.2s fix(terminal): harden supervisor lifecycle a
+  [11/26] OK   5b9484b8 applies=1 pass=1   5.7s fix(streaming): suppress visible progress ec
+  [12/26] OK   2419b3a0 applies=1 pass=1   6.2s Stage 404: PR #2830 — fix(sessions): keep pi
+  [13/26] OK   70402f96 applies=1 pass=1   5.6s fix(workspace): fall back for large markdown
+  [14/26] OK   67a20477 applies=1 pass=1   6.1s fix(csrf): clarify rejection diagnostics
+  [15/26] OK   d20da832 applies=1 pass=1   7.4s fix(static): tighten cache validators and 30
+  [16/26] OK   160cd03c applies=1 pass=1   5.2s fix(chat): reset reasoning accumulator per t
+  [17/26] OK   1f56fad7 applies=1 pass=1   5.7s fix(chat): flush pending render before segme
+  [18/26] OK   d7f1514d applies=1 pass=1   5.0s fix(models): surface bedrock provider in Web
+  [19/26] OK   af1ee81f applies=1 pass=1   5.0s fix(chat): resolve session model before acti
+  [20/26] OK   4153a47d applies=1 pass=1   5.3s feat: new_session() reads display.personalit
+  [21/26] OK   f81d24ec applies=1 pass=1   5.2s fix(chat): resync sidebar after panel switch
+  [22/26] OK   80356c3a applies=1 pass=1   5.5s Stage 400: PR #2709 — fix(model): prefer pro
+  [23/26] OK   cc36711b applies=1 pass=1   5.7s Stage 400: PR #2710 — fix: render streamed m
+  [24/26] OK   3874781a applies=1 pass=1   6.3s Stage 399: PR #2704 — fix(streaming): preven
+  [25/26] OK   8e1ac89b applies=1 pass=1   5.6s Stage 397: PR #2692 — fix(ui): invalidate tr
+  [26/26] OK   3dd2ace4 applies=1 pass=1   5.6s Stage 397: PR #2689 — fix(chat): preserve in
+
+oracle: 26/26 gold answers scored as solved (100%)
+ORACLE_EXIT=0
