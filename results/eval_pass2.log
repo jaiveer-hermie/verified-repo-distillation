@@ -1,0 +1,81 @@
+=== TUNED pass@2 ===
+pairs: 34 total -> 26 within scope (<= 2 files, <= 6000 patch bytes)
+arm A: 26 commits
+  A d6c1b696 apply   5.3s out=   732c fin=stop     
+  A 71e6eabb fail    6.8s out=  3514c fin=stop     edit 3: SEARCH not found in api/models.py
+  A b3483d94 fail    2.6s out=   947c fin=stop     edit 1: SEARCH not found in api/streaming.py
+  A da9211bf fail    4.1s out=  2177c fin=stop     edit 2: SEARCH not found in api/routes.py
+  A 39f09a5b fail    2.5s out=   741c fin=stop     edit 1: SEARCH not found in api/routes.py
+  A c1942a1c fail   10.6s out=  4857c fin=stop     edit 1: SEARCH not found in api/models.py
+  A 38905f33 apply  17.5s out=  9754c fin=stop     
+  A 74fe79dd fail   10.2s out=  5172c fin=stop     edit 1: SEARCH not found in api/config.py
+  A fceb2552 fail    9.8s out=  5208c fin=stop     edit 1: SEARCH not found in api/routes.py
+  A 0db8f5de fail   18.7s out=  9793c fin=stop     edit 4: SEARCH not found in api/terminal.py
+  A 5b9484b8 fail    5.2s out=  2567c fin=stop     edit 1: SEARCH not found in api/streaming.py
+  A 2419b3a0 fail   36.2s out= 19106c fin=length   too many edits (25 > 20)
+  A 70402f96 fail    6.9s out=  3040c fin=stop     edit 1: SEARCH not found in static/workspace.js
+  A 67a20477 fail    5.7s out=  2584c fin=stop     edit 2: SEARCH not found in api/routes.py
+  A d20da832 apply  15.7s out=  7011c fin=stop     
+  A 160cd03c fail   15.1s out=  6803c fin=stop     edit 2: SEARCH not found in static/messages.js
+  A 1f56fad7 fail   12.1s out=  6020c fin=stop     edit 1: SEARCH not found in static/messages.js
+  A d7f1514d fail   21.7s out=  6779c fin=stop     edit 4: SEARCH not found in api/config.py
+  A af1ee81f PASS   11.2s out=  5650c fin=stop     
+  A 4153a47d PASS    4.5s out=  2030c fin=stop     
+  A f81d24ec PASS    3.7s out=  1493c fin=stop     
+  A 80356c3a fail    8.3s out=  4062c fin=stop     edit 1: SEARCH not found in static/boot.js
+  A cc36711b fail   14.9s out=  6329c fin=stop     edit 1: SEARCH not found in static/messages.js
+  A 3874781a fail   18.0s out=  8994c fin=stop     edit 1: SEARCH not found in api/streaming.py
+  A 8e1ac89b fail   15.5s out=  7622c fin=stop     edit 1: SEARCH not found in static/ui.js
+  A 3dd2ace4 fail    6.2s out=  2621c fin=stop     edit 2: SEARCH not found in static/messages.js
+
+| Arm | Context | n | passed | pass rate | 95% CI | applies |
+|---|---|---|---|---|---|---|
+| A | base model, minimal context | 26 | 3 | 11.5% | [4.0, 29.0] | 23.1% |
+
+first failure notes:
+  - edit 3: SEARCH not found in api/models.py
+  - edit 1: SEARCH not found in api/streaming.py
+  - edit 2: SEARCH not found in api/routes.py
+wrote data/hermes-webui-all/dataset/eval_report.json
+wrote data/hermes-webui-all/dataset/eval_scores.jsonl
+=== BASE pass@2 ===
+pairs: 34 total -> 26 within scope (<= 2 files, <= 6000 patch bytes)
+arm A: 26 commits
+  A d6c1b696 apply   2.0s out=   834c fin=stop     
+  A 71e6eabb fail    3.7s out=  1749c fin=stop     edit 1: SEARCH not found in api/models.py
+  A b3483d94 apply   4.7s out=  3060c fin=stop     
+  A da9211bf apply   3.3s out=  1783c fin=stop     
+  A 39f09a5b apply   1.6s out=   340c fin=stop     
+  A c1942a1c fail    2.6s out=   807c fin=stop     edit 3: SEARCH not found in api/models.py
+  A 38905f33 PASS    8.4s out=  5287c fin=stop     
+  A 74fe79dd fail    5.5s out=  2914c fin=stop     edit 1: SEARCH not found in api/config.py
+  A fceb2552 fail    6.8s out=  3437c fin=stop     edit 1: SEARCH not found in api/routes.py
+  A 0db8f5de apply  10.4s out=  6238c fin=stop     
+  A 5b9484b8 apply   2.8s out=  1410c fin=stop     
+  A 2419b3a0 fail    7.9s out=  4208c fin=stop     edit 2: SEARCH not found in static/sessions.js
+  A 70402f96 fail    4.2s out=  1991c fin=stop     edit 2: SEARCH not found in static/workspace.js
+  A 67a20477 apply   4.7s out=  2801c fin=stop     
+  A d20da832 apply  10.6s out=  5247c fin=stop     
+  A 160cd03c fail   12.0s out=  6290c fin=stop     edit 3: SEARCH not found in static/ui.js
+  A 1f56fad7 PASS    4.1s out=  1549c fin=stop     
+  A d7f1514d apply   8.1s out=  2457c fin=stop     
+  A af1ee81f PASS    1.9s out=   657c fin=stop     
+  A 4153a47d apply   4.2s out=  1913c fin=stop     
+  A f81d24ec PASS    3.6s out=  1508c fin=stop     
+  A 80356c3a apply   7.0s out=  4076c fin=stop     
+  A cc36711b fail    9.8s out=  4941c fin=stop     edit 1: SEARCH not found in static/messages.js
+  A 3874781a fail   12.9s out=  6978c fin=stop     edit 5: SEARCH not found in api/streaming.py
+  A 8e1ac89b apply   7.4s out=  4044c fin=stop     
+  A 3dd2ace4 apply  11.6s out=  5947c fin=stop     
+
+| Arm | Context | n | passed | pass rate | 95% CI | applies |
+|---|---|---|---|---|---|---|
+| A | base model, minimal context | 26 | 4 | 15.4% | [6.2, 33.5] | 65.4% |
+
+first failure notes:
+  - edit 1: SEARCH not found in api/models.py
+  - edit 3: SEARCH not found in api/models.py
+  - edit 1: SEARCH not found in api/config.py
+wrote data/hermes-webui-all/dataset/eval_report.json
+wrote data/hermes-webui-all/dataset/eval_scores.jsonl
+PASS2_DONE

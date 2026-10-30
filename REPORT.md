@@ -96,6 +96,13 @@ style, not capability. It learned something about *which* edit to attempt and
 lost contract discipline. The task is not solved by adding corpus-specific
 weights at this scale.
 
+Serviced note on the repair loop (`--attempts 2`, same server, same prompts):
+a second attempt with the failing test output fed back moved the base model from
+**3/26 to 4/26** (15.4%, CI [6.1, 33.5]) and the tuned model from **3/26 to
+3/26** (unchanged). The retry loop buys the base model one solve and the adapter
+nothing, which is consistent with the diagnosis: the adapter's problem is
+emitting a usable anchor, and seeing the error does not fix that for it.
+
 Served on a rented Vast.ai RTX 6000 Ada (48 GB) with vLLM 0.32.0,
 `--enable-lora`, base `Qwen/Qwen3-30B-A3B-Instruct-2507-FP8` + our PEFT adapter
 (`r=16`, attention projections). MoE LoRA path confirmed by
