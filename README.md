@@ -39,6 +39,25 @@ apparatus are the contribution. See `GATE-AUDIT.md`, `LIMITATIONS.md`, `SCALING.
 
 ---
 
+## NVIDIA & Nebius usage (required disclosure)
+
+| what | where |
+|---|---|
+| **NVIDIA open-source model** | `Nemotron 3 Ultra 550B` and `Nemotron 3 Super 120B`, benchmarked on the held-out commits (17/26 and 3/26). Requests go through `vrd/evaluate.py:ChatClient` with per-model reasoning capability detection read from `/api/v1/models`. |
+| **Nebius Token Factory** | Serves every Nemotron call used in this project, and hosted the LoRA fine-tune job (`ftjob-8c6c6ffcf7734e97b1663d500b64a72f`, 1,144,590 tokens trained). |
+| where Token Factory accelerated the work | The fine-tune and the 300B+ model evaluations would otherwise have needed rented GPUs; Token Factory made both a single API call, which is what allowed iterating on corpus quality rather than on infrastructure. |
+| other Nebius services | None — no AI Cloud VMs or Serverless Jobs were used. |
+| known platform limits we hit | `custom_weights_id` must start with `model-artifact_`; `GET /v0/model_artifacts` returns 403 on this account; `POST /v0/models` returns 410 "LoRA adapter deployment is no longer available". Fine-tuneable models exclude Nemotron (HTTP 422 for both Super and Nano). Details in `references/` of the linked write-up and in `LIMITATIONS.md`. |
+
+The tuned arm is **Qwen3-30B-A3B**, not Nemotron, because Nemotron cannot be fine-tuned on Token Factory.
+It is served on a rented RTX 6000 Ada with vLLM (`--enable-lora`) and the base arm was re-run on that same
+server so the adapter is never confounded with the provider's quantization. Every place a Nemotron number
+appears, it is labelled as the vendor arm and never as the base model for the tuned comparison.
+
+Licensed **Apache-2.0** (see `LICENSE` at the repository root).
+
+---
+
 ## The gate (the actual contribution)
 
 For each candidate commit `C` with parent `P`:

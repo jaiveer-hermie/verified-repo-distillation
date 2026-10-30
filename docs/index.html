@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verified Repo Distillation — results dashboard</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#111821; --line:#1e2a37; --ink:#e6edf3;
+    --dim:#8b9bb0; --accent:#f0b429; --good:#3fb950; --bad:#f85149; --warn:#d29922;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:48px 24px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:36px}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  h1{font-size:34px;line-height:1.15;margin:0 0 14px;letter-spacing:-.02em}
+  .sub{color:var(--dim);font-size:16px;max-width:70ch;margin:0}
+  .rule{display:inline-block;margin-top:18px;font-family:var(--mono);font-size:12.5px;color:var(--ink);background:#161f2a;border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;border-radius:4px}
+  h2{font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:44px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:18px}
+  .card .n{font-family:var(--mono);font-size:26px;font-weight:600;letter-spacing:-.02em}
+  .card .l{font-size:12.5px;color:var(--dim);margin-top:6px}
+  .card .d{font-size:11.5px;color:#5d6b7d;margin-top:8px;font-family:var(--mono)}
+  .g{color:var(--good)} .b{color:var(--bad)} .w{color:var(--warn)} .a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;font-size:14px;margin-top:4px}
+  th{text-align:left;font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--dim);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:11px 10px;border-bottom:1px solid #161f28;vertical-align:top}
+  td.mono,th.mono{font-family:var(--mono);font-size:12.5px}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:3px;border:1px solid var(--line);color:var(--dim)}
+  .pill.ok{color:var(--good);border-color:#1c3b25;background:#0d1a12}
+  .pill.no{color:var(--bad);border-color:#3d1d1c;background:#1a0f0e}
+  .pill.fl{color:var(--warn);border-color:#3d3116;background:#1a1509}
+  .note{font-size:13.5px;color:var(--dim);margin:14px 0 0;max-width:78ch}
+  .note strong{color:var(--ink);font-weight:600}
+  ul.clean{list-style:none;padding:0;margin:0;font-size:14px}
+  ul.clean li{padding:9px 0;border-bottom:1px solid #161f28;display:flex;gap:14px;align-items:baseline}
+  ul.clean li:last-child{border-bottom:none}
+  ul.clean .t{font-family:var(--mono);font-size:12.5px;color:var(--accent);min-width:92px}
+  pre{background:#0d131a;border:1px solid var(--line);border-radius:6px;padding:16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;color:#c3d0de;margin:14px 0 0}
+  footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);color:#5d6b7d;font-size:12.5px;font-family:var(--mono)}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(240,180,41,.3)}
+  a:hover{border-bottom-color:var(--accent)}
+  @media print{body{background:#fff;color:#000}.card,pre{background:#f7f7f7}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">Nebius × NVIDIA Global AI Hackathon — Coding &amp; Agentic Engineering</div>
+  <h1>Verified Repo Distillation</h1>
+  <p class="sub">Every "fine-tune on your codebase" tool mines <code>git log</code> into (context → patch) pairs and
+  assumes each commit was correct. We execute the commit's own tests on both sides of every commit, keep only the
+  pairs that provably flip a test from red to green — then measure what that proof is actually worth.</p>
+  <div class="rule">red before the change · green after it · a named test must flip · nothing green may go red</div>
+</header>
+
+<h2>1 — The gate, measured on its own output</h2>
+<div class="grid">
+  <div class="card"><div class="n">565 → 525</div><div class="l">candidates → accepted by the suite-level rule</div><div class="d">92.9% · hermes-webui</div></div>
+  <div class="card"><div class="n g">36 / 40</div><div class="l">survive the strict per-test rule</div><div class="d">90.0% · CI [76.9, 96.0]</div></div>
+  <div class="card"><div class="n w">4 / 40</div><div class="l">were never evidence of anything</div><div class="d">2 no-transition · 1 non-reproducing · 1 flaky</div></div>
+  <div class="card"><div class="n b">4 / 40</div><div class="l">verdict drift on re-run</div><div class="d">all verified → reject_no_transition</div></div>
+</div>
+<p class="note">Two independent 40-commit samples, different seeds, different rules, both land at <strong>90%</strong>.
+The gate's real precision is ~90%, not the 100% implied by "525 verified". We publish our own corpus's failure rate.</p>
+
+<h2>2 — The four false pairs the strict rule caught</h2>
+<table>
+  <thead><tr><th class="mono">commit</th><th class="mono">verdict</th><th>why it is not a training pair</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">b2771ebf</td><td><span class="pill no">no_transition</span></td><td>Suite went red → green, but no named test flipped. Nothing can be credited to the patch.</td></tr>
+    <tr><td class="mono">c616c8e7</td><td><span class="pill no">no_transition</span></td><td>Same: green after, zero fail→pass transitions.</td></tr>
+    <tr><td class="mono">5fc7aee7</td><td><span class="pill no">post_failed</span></td><td>Does not reproduce at all on re-run. The original verdict was never a property of the commit.</td></tr>
+    <tr><td class="mono">3fd20599</td><td><span class="pill fl">flaky</span></td><td>4 tests change outcome between identical runs — including the 2 counted as the fix. A coin flip.</td></tr>
+  </tbody>
+</table>
+<p class="note">Drift sample (independent seed): <code>b49de928 · 7b6d91d4 · 7d1aa2e2 · fceb2552</code> — all four were recorded
+as <strong>verified</strong> and cannot produce a single fail→pass test on replay.</p>
+
+<h2>3 — The instrument proven before any model number</h2>
+<div class="grid">
+  <div class="card"><div class="n g">26 / 26</div><div class="l">gold answers score solved (oracle)</div><div class="d">identical parse → apply → test → score path</div></div>
+  <div class="card"><div class="n g">0 / 31</div><div class="l">held-out lines reproduced from memory</div><div class="d">contamination probe · temporal split</div></div>
+  <div class="card"><div class="n">26</div><div class="l">held-out commits, execution-scored</div><div class="d">148 train / 34 held out · split 2026-05-19</div></div>
+  <div class="card"><div class="n">56</div><div class="l">unit tests on the harness</div><div class="d">incl. 8 on the strict transition rule</div></div>
+</div>
+
+<h2>4 — Base vs tuned, one server, one set of prompts</h2>
+<table>
+  <thead><tr><th>arm</th><th class="mono">tests pass</th><th class="mono">patches apply</th><th class="mono">pass / applied</th></tr></thead>
+  <tbody>
+    <tr><td>base Qwen3-30B-A3B</td><td class="mono">4 / 26</td><td class="mono">17 / 26</td><td class="mono">24%</td></tr>
+    <tr><td>+ LoRA on 148 verified pairs</td><td class="mono b">3 / 26</td><td class="mono b">6 / 26</td><td class="mono">50%</td></tr>
+  </tbody>
+</table>
+<p class="note">Solved sets: 2 shared, <strong>2 base-only</strong>, <strong>1 tuned-only</strong> → tuning is <strong>net −1 task</strong>.
+Application rate collapses 17→6 (Fisher p = 0.0047) while pass-per-applied doubles. The adapter did not learn the repo;
+it lost the output contract. A patch that fails to parse scores zero, so that trade is negative.</p>
+
+<h2>5 — Separate vendor arm (NVIDIA, via Nebius Token Factory)</h2>
+<table>
+  <thead><tr><th>model</th><th class="mono">held-out solved</th><th>note</th></tr></thead>
+  <tbody>
+    <tr><td>Nemotron 3 Ultra 550B</td><td class="mono g">17 / 26 (65%)</td><td>same prompts, same scorer, Token Factory API</td></tr>
+    <tr><td>Nemotron 3 Super 120B</td><td class="mono">3 / 26</td><td>reasoning budget starved at 4k output; not comparable to NVIDIA's multi-turn SWE-bench figures</td></tr>
+  </tbody>
+</table>
+<p class="note">Nemotron cannot be fine-tuned on Token Factory (HTTP 422 on Super and Nano), which is why the tuned arm is
+Qwen and served on rented vLLM. That substitution is stated wherever the numbers appear.</p>
+
+<h2>6 — Reproduce</h2>
+<pre># gate one repository (strict: named fail→pass, no regressions, stable across runs)
+python run.py gate --repo ~/projects/hermes-webui --data data/hermes-webui-all --strict --repeats 2
+
+# prove the harness on gold answers before quoting any model number
+python run.py oracle --repo ~/projects/hermes-webui --data data/hermes-webui-all/dataset --time-split 2026-05-19T01:38:13Z
+
+# audit what the gate already accepted, and measure verdict drift
+python scripts/audit_gate.py --repo ~/projects/hermes-webui --data data/hermes-webui-all --sample 40 --repeats 2 --seed 7
+python scripts/reverify.py  --repo ~/projects/hermes-webui --data data/hermes-webui-all --sample 40 --strict --repeats 2</pre>
+
+<footer>
+  Apache-2.0 · results/<span> audit_strict.json · reverify.json · eval_scores_*.jsonl · </span>
+  <a href="https://github.com/jaiveer-hermie/verified-repo-distillation">github.com/jaiveer-hermie/verified-repo-distillation</a>
+</footer>
+
+</div>
+</body>
+</html>
