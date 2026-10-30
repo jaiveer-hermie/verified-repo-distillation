@@ -183,6 +183,29 @@ def hunk_windows(patch: str) -> dict[str, list[tuple[int, int]]]:
     return windows
 
 
+def _locate_from_patch(body: str, patch: str) -> tuple[int, int] | None:
+    """Line range where the patch changes this file, found from its pre-image lines.
+
+    hunk_windows only helps when the hunk headers parse cleanly. When a file has
+    no window, build_context used to fall back to the FIRST N bytes of the file,
+    which for a 500 KB file edited in the middle guarantees the anchor is absent
+    and the pair gets discarded as unanswerable. Locating the removed lines
+    directly recovers those pairs.
+    """
+    lines = body.splitlines()
+    removed = [l[1:].strip() for l in patch.splitlines()
+               if l.startswith("-") and not l.startswith("---")]
+    needles = [r for r in removed if len(r) >= 12]
+    if not needles:
+        return None
+    stripped = [l.strip() for l in lines]
+    for needle in needles[:6]:
+        for i, line in enumerate(stripped):
+            if line == needle:
+                return (max(1, i + 1 - 60), min(len(lines), i + 1 + 60))
+    return None
+
+
 def build_context(tree_files: dict[str, str], test_names: list[str],
                   windows: dict[str, list[tuple[int, int]]] | None = None,
                   pad: int = 60) -> str:
@@ -348,8 +371,28 @@ def build_pairs(repo_path: str | Path, verdicts_path: str | Path, out_path: str 
         if not tree_files:
             continue
 
-        context = build_context(tree_files, test_names_touching(repo, parent, source_files),
-                                windows=hunk_windows(patch))
+        spec_tests = test_names_touching(repo, parent, source_files)
+        windows = hunk_windows(patch)
+        for path in source_files:
+            if path in windows or path not in tree_files:
+                continue
+            located = _locate_from_patch(tree_files[path], patch)
+            if located:
+                windows[path] = [located]
+        context = build_context(tree_files, spec_tests, windows=windows)
+
+        # Adaptive padding. A fixed +/-60-line window drops any commit whose hunks
+        # sit far apart, and 285 pairs were being discarded for exactly that
+        # reason. Grow the window only as far as needed to make the answer
+        # reproducible, stopping before the context budget is blown.
+        if not edits_visible_in_context(patch, context):
+            for pad in (120, 240, 480, 960):
+                candidate = build_context(tree_files, spec_tests, windows=windows, pad=pad)
+                if len(candidate) > MAX_CONTEXT_BYTES and len(candidate) > len(context):
+                    break
+                context = candidate
+                if edits_visible_in_context(patch, context):
+                    break
 
         # The tests are the specification. Without them the model is guessing
         # intended behaviour from a commit subject, which is why early runs

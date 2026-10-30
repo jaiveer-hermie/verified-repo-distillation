@@ -76,10 +76,29 @@ gold hunks whose anchor text was ambiguous.
 Same 26 held-out pairs, same prompts, one attempt per pair, execution-scored
 (patch must apply **and** the commit's own tests must pass).
 
-| model | patch applied | tests passed | pass rate (Wilson 95%) |
-|---|---|---|---|
-| **Qwen3-30B-A3B base** | 22/26 | **3/26** | 11.5% [4.0, 29.0] |
-| **Qwen3-30B-A3B + LoRA (verified pairs)** | **not evaluable** | — | — |
+| model | patch applied | tests passed | pass rate (Wilson 95%) | pass per applied |
+|---|---|---|---|---|
+| **Qwen3-30B-A3B base** | 22/26 (84.6%) | **3/26** | 11.5% [4.0, 29.0] | 14% |
+| **Qwen3-30B-A3B + LoRA (148 verified pairs)** | 10/26 (38.5%) | **3/26** | 11.5% [4.0, 29.0] | 30% |
+
+**The same three commits pass in both arms.** There is no commit solved by the
+tuned model that the base model misses, and none the reverse. Tuning on the
+verified corpus changed *no* outcome on this held-out set.
+
+What it did change: the adapter became markedly less reliable at emitting a
+usable SEARCH/REPLACE anchor (84.6% → 38.5% of patches apply), while the patches
+it does manage to emit are more often correct (14% → 30% pass-per-apply). Output
+grew from 18,018 to 34,872 tokens for the same 26 prompts.
+
+Interpretation: with 148 training examples and one epoch, the adapter shifts
+style, not capability. It learned something about *which* edit to attempt and
+lost contract discipline. The task is not solved by adding corpus-specific
+weights at this scale.
+
+Served on a rented Vast.ai RTX 6000 Ada (48 GB) with vLLM 0.32.0,
+`--enable-lora`, base `Qwen/Qwen3-30B-A3B-Instruct-2507-FP8` + our PEFT adapter
+(`r=16`, attention projections). MoE LoRA path confirmed by
+`MoE model detected. Using fused MoE LoRA implementation`.
 
 The baseline applies patches readily (22/26) and almost never satisfies the
 tests (3/26). That is the number the adapter has to move.
@@ -98,16 +117,33 @@ tests (3/26). That is the number the adapter has to move.
 
 ## 7. Why the tuned arm has no number
 
-Deploying fine-tuned weights is **beta and on request** on Token Factory:
-> "Working with custom model weights is currently in beta and available on request.
-> … please contact our Support team to enable access." — docs, *Custom model weights*
+Every self-serve route to serving this adapter was tested against the live API,
+and each one is closed on this platform:
 
-Verified directly: the job exposes `fine_tuned_model: null`, no tuned model id
-appears in `/v1/models`, and custom weights are deployable only through a
-request-gated flow. So the adapter exists and is charged for, but has no inference
-endpoint I can score against.
+| attempt | result |
+|---|---|
+| `POST /v0/dedicated_endpoints` with `custom_weights_id = ftjob-…` (job id) | 422 — must start with `model-artifact_` |
+| …with `custom_weights_id = ftckpt_1b6c9928…` (checkpoint id) | 422 — same validator |
+| …with `custom_weights_id = "ft:Qwen/…:ckpt-step-11"` (the `fine_tuned_model_checkpoint` string) | 422 — same validator |
+| …with `custom_weights_id = "job:ckpt"` | 422 — same validator |
+| `GET /v0/model_artifacts` (the artifact registry the validator wants) | **403** — route exists, account has no access (beta, on request) |
+| `POST /v0/models` with `{"source": "<job>:<ckpt>"}` (older LoRA-deploy flow) | **410 Gone** — "LoRA adapter deployment is no longer available" |
 
-**This is the one thing standing between the project and its headline result.**
+No public API path creates a model artifact: all 36 paths in the OpenAPI spec were
+enumerated, and none fall under artifact/weights/custom. The `checkpoints`
+endpoint is inspection-only — it returns the checkpoint id, the `ft:` model
+string, `train_loss`, and the adapter `result_files`, but no identifier that the
+deployment API will accept.
+
+Additional signal: the returned `fine_tuned_model_checkpoint` string contains
+literal `org_placeholder` and `IDPlaceholder` segments, i.e. the platform did not
+fill in the organisation/artifact identifiers — consistent with the checkpoint
+not being registered for deployment on this account.
+
+The adapter itself is real and downloadable (38.2 MB: `adapter_model.safetensors`
+26.78 MB, an 11.42 MB shard, plus configs), so the weights exist and are ours.
+Serving them requires either beta access to model artifacts, or self-hosting the
+merged model on a GPU (docs: *Merging LoRA Adapters* → vLLM).
 
 ## 8. Usage within the $29 budget
 
@@ -148,9 +184,15 @@ Nothing was deployed as a dedicated endpoint, so there are no GPU-hour charges.
 
 The framework works and is proven: the gate is decisive, the scorer is
 execution-only, the oracle scores gold answers 100%, and the held-out set is
-demonstrably unseen. The corpus is small but clean.
+demonstrably unseen (0/31 lines memorised).
 
-**The headline question — does tuning on verified history beat the base model —
-is still unanswered**, because the tuned model cannot be served on this platform
-without access that has to be requested. I will not report an improvement number
-I could not measure.
+The tuned arm finally ran, and the answer is negative: **fine-tuning on 148
+verified commits did not solve a single additional task** (3/26 both arms, same
+three commits). It reduced patch-application reliability from 84.6% to 38.5%.
+
+That is a real result, not a failure to measure. The contribution is the corpus
+construction and the measurement apparatus; the claim "tune on verified history
+and the model gets better at this repo" is **not supported at this data scale**
+on a 26-task holdout. To test it properly you need either far more pairs
+(≈1k+, which would need the 285 dropped pairs recovered and a second repository)
+or a repair loop, since one-shot emission is where the adapter lost the plot.
