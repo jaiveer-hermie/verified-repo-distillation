@@ -1,7 +1,8 @@
 # Project report — Verified Repo Distillation
 
 Date: 2026-10-28 · Nebius × NVIDIA Hackathon, Coding & Agentic Engineering track
-Status: **pipeline complete and validated; tuning arm trained but not evaluable** (platform gate).
+Status: **pipeline complete and validated; both arms measured.** Tuning on the
+verified corpus produced no additional solved tasks.
 
 ---
 
@@ -101,7 +102,9 @@ Served on a rented Vast.ai RTX 6000 Ada (48 GB) with vLLM 0.32.0,
 `MoE model detected. Using fused MoE LoRA implementation`.
 
 The baseline applies patches readily (22/26) and almost never satisfies the
-tests (3/26). That is the number the adapter has to move.
+tests (3/26). The adapter was expected to move that number. It did not: it moved
+the *other* number instead, cutting patch application to 10/26 while leaving the
+3/26 pass count untouched.
 
 ## 6. The fine-tune
 
