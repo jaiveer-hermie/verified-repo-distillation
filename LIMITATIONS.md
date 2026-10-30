@@ -140,12 +140,11 @@ well-localised edits, nothing about large multi-file refactors).
 
 ### 2.2 The contamination probe is thinner than the headline suggests
 
-`REPORT.md` says "0/31 lines reproduced". Read the log
+`REPORT.md` says "0/31 lines reproduced". The log
 (`data/hermes-webui-all/contamination.log`) and probe
-(`scripts/contamination_probe.py`) and the actual scope is:
+(`scripts/contamination_probe.py`) show the actual scope:
 
-- **5 cases**, not 26. The script caps `cases` at 5 and keeps only files with
-  ≥ 120 lines.
+- **5 cases**, not 26 — the script caps `cases` at 5, files ≥ 120 lines.
 - **31 countable lines** across 5 files per model; the log reads
   `matched 0/10 (out 2 lines, 8c)` — the model answered `UNKNOWN`, and the
   counter only accumulates on non-UNKNOWN responses.
@@ -349,25 +348,23 @@ fair and valuable measurement — but of a specific skill:
 > **"Given a codebase, a one-line intent, and the exact test assertions, emit a
 > patch that satisfies those assertions."**
 
-Consequences for interpretation:
+**We are therefore not measuring bug-finding.** The model is never asked to
+identify what is wrong; the commit's own test file names the behaviour, the
+functions and the expected values. A model that cannot locate a bug but *can*
+satisfy a written assertion is fully credited. Nor are we measuring intent
+inference: `## Request` is the commit subject — `feat: add distinct
+attention request sound` — often an imprecise summary of a real multi-part
+change, and the model can largely ignore it and work from the tests. The
+metric is closer to **"specification satisfaction"** than to "software
+engineering." That is a legitimate and useful benchmark, but it must be named
+accurately: a 65.4% score on "satisfy these assertions" is not a 65.4%
+SWE-bench score and must never be presented adjacent to one.
 
-- **We are not measuring bug-finding.** The model is never asked to identify
-  what is wrong; the commit's own test file names the behaviour, the
-  functions and the expected values. A model that cannot locate a bug but
-  *can* satisfy a written assertion is fully credited.
-- **We are not measuring intent inference.** `## Request` is the commit
-  subject — `feat: add distinct attention request sound` — often an imprecise
-  summary of a real multi-part change. The model can largely ignore it and
-  work from the tests.
-- **The metric is closer to "specification satisfaction" than to "software
-  engineering."** A 65.4% score on "satisfy these assertions" is not a 65.4%
-  SWE-bench score and must never be presented adjacent to one.
-- **The effect on the tuning hypothesis is asymmetric.** The training pairs
-  were built the same way (148/148 train prompts also carry
-  `## Tests that must pass`, verified in `export/train.jsonl`), so tuning was
-  aligned with the task — good. But the corpus therefore teaches
-  *spec-to-patch* translation, the narrow skill the model already had, not
-  general repo editing.
+The effect on the tuning hypothesis is asymmetric. The training pairs were
+built the same way (148/148 train prompts also carry
+`## Tests that must pass`, verified in `export/train.jsonl`), so tuning was
+aligned with the task — good. But the corpus therefore teaches *spec-to-patch*
+translation, the narrow skill the model already had, not general repo editing.
 
 **The spec leaks the answer's shape.** The test file is the *post-commit*
 test; its assertions constrain the patch tightly (which function, which
@@ -404,10 +401,10 @@ order of importance:
    requests, seaborn, xarray) with a fixed ~2,294-instance split. Ours is 26
    commits from one Python web application. Absolute difficulty is not
    comparable in either direction.
-2. **Different harness.** Multi-turn agentic vs one-shot emission. This is not
-   a detail — it is most of the benchmark. An agentic harness that sees a
-   failing test can recover from a bad anchor that is fatal to us. Repair
-   turns in this literature commonly add tens of points of absolute rate.
+2. **Different harness.** Multi-turn agentic vs one-shot emission — this is
+   most of the benchmark. An agentic harness that sees a failing test can
+   recover from a bad anchor that is fatal to us; repair turns in this
+   literature commonly add tens of points of absolute rate.
 3. **Different measurement.** SWE-bench scores FAIL_TO_PASS **and**
    PASS_TO_PASS; we score only the commit's own newly-added tests. Ours is
    *narrower* (fewer tests to satisfy) but the context is also narrower.
@@ -451,14 +448,13 @@ failed the tests**, with real assertion counts — e.g. `passed: 31, failed:
 failures**: a well-formed patch that does not implement the required
 behaviour.
 
-- The anchor-matching story describes *why patches fail to apply* — a
-  **contract-discipline** problem.
-- The 19 applied-but-failed patches for the base model are a **capability**
-  problem, and they are the majority of the failures.
-- A benchmark where 4 of 26 tasks are blocked by output-format mechanics and
-  the rest by semantics measures two different things, and the format failures
-  are the cheaper ones to fix (they would largely disappear with a repair
-  loop or a whole-file edit contract).
+The anchor-matching story describes *why patches fail to apply* — a
+**contract-discipline** problem. The 19 applied-but-failed patches for the
+base model are a **capability** problem, and they are the majority of the
+failures. A benchmark where 4 of 26 tasks are blocked by output-format
+mechanics and the rest by semantics measures two different things, and the
+format failures are the cheaper ones to fix (they would largely disappear with
+a repair loop or a whole-file edit contract).
 
 We should present the taxonomy honestly rather than attributing everything to
 anchors: a reviewer who opens the score files will count 19
@@ -469,16 +465,16 @@ are anchor failures" claim was never checked.
 
 ## 6. Corpus filtering: 3,526 → 565 → 525 → 460 → 353 → 182 → 26
 
-| stage | count | what was dropped | source |
+| stage | count | dropped | source |
 |---|---|---|---|
-| commits ingested | 3,526 | — | `commits.jsonl` |
-| gate candidates | 565 | — | `candidates.jsonl`, `verdicts.jsonl` |
-| **gate verified** | **525** | 14 `reject_pre_passed`, 25 `reject_post_failed`, 1 `reject_replay` | `verdicts.jsonl` |
-| after expressibility filter | **460** | 23/483 unplayable in position-free SEARCH/REPLACE | commit `63a70f6` |
-| after context-completeness filter | **353** | 107/483 with SEARCH text not visible in prompt | commit `71862a5` |
-| after code-only filter | **182** | docs/changelogs treated as source | commit `866477d` |
-| temporal split at p80 | **148 train / 34 held out** | — | `export/{train,eval}.jsonl` |
-| scope filter (≤2 files, ≤6,000 B) | **26 evaluated** | 8 held-out pairs | `dataset/eval_scores_*.jsonl` |
+| ingested | 3,526 | — | `commits.jsonl` |
+| gate candidates | 565 | — | `verdicts.jsonl` |
+| **gate verified** | **525** | 14 pre-passed, 25 post-failed, 1 replay | `verdicts.jsonl` |
+| expressibility filter | **460** | 23/483 unplayable in position-free SEARCH/REPLACE | `63a70f6` |
+| context-completeness filter | **353** | 107/483 with SEARCH text not visible | `71862a5` |
+| code-only filter | **182** | docs/changelogs treated as source | `866477d` |
+| temporal split at p80 | **148 / 34** | — | `export/{train,eval}.jsonl` |
+| scope (≤2 files, ≤6,000 B) | **26 evaluated** | 8 held-out pairs | `eval_scores_*.jsonl` |
 
 Against 525 verified commits the final held-out set is **26 — 5.0%**. Against
 3,526 commits, **0.74%**. Every drop was a *good* decision on its own terms;
@@ -534,27 +530,26 @@ teaches and therefore biases the tuning conclusion.**
 **Before the tuning conclusion is accepted:**
 
 1. **Power the experiment or stop claiming a null.** Either report the tuning
-   result explicitly as *under-powered and inconclusive*, with the §1.3 power
-   table attached, or run enough held-out pairs to detect the effect sizes you
-   care about (11.5% → 30% needs **n ≈ 80 per arm**; → 25% needs **n ≈ 130**;
-   we have 26). The corpus cannot supply this from `hermes-webui` alone.
+   result as *under-powered and inconclusive* with the §1.3 power table
+   attached, or run enough held-out pairs to detect the effect sizes you care
+   about (11.5% → 30% needs **n ≈ 80 per arm**; → 25% needs **n ≈ 130**; we
+   have 26). The corpus cannot supply this from `hermes-webui` alone.
 2. **Run a positive control on the fine-tune.** The adapter demonstrably
    changed behaviour (2.6× output, anchor reliability halved). Prove the
-   training pipeline can teach *anything* at this scale: e.g. measure
-   held-out-by-epoch performance on the 148 pairs, or train a synthetic
-   format task (given input and gold patch, emit the patch) where a working
-   fine-tune should approach 100%. If the adapter cannot learn a trivially
-   learnable task from 148 examples in 1 epoch, the null says nothing about
-   the corpus and only about the recipe.
+   pipeline can teach *anything* at this scale: measure held-out-by-epoch
+   performance on the 148 pairs, or train a synthetic format task (given
+   input and gold patch, emit the patch) where a working fine-tune should
+   approach 100%. If the adapter cannot learn a trivially learnable task from
+   148 examples in 1 epoch, the null says nothing about the corpus and only
+   about the recipe.
 3. **Remove the serving confound.** Serve the **base** model through the
    identical Vast.ai + vLLM 0.32.0 + `--enable-lora` path used for the tuned
    arm. If base-under-Vast also drops to ~10/26 applied, the "regression" is
-   infrastructure. This is cheap (26 calls) and is the single most important
-   missing control.
+   infrastructure. Cheap (26 calls) and the single most important missing
+   control.
 4. **Sweep the LoRA configuration.** At minimum epochs 1→3, rank 16→64,
    targets attention-only→attention+MLP. A null at one hyperparameter setting
-   is not a null about the hypothesis. Report the best configuration found,
-   not the first.
+   is not a null about the hypothesis. Report the best configuration found.
 5. **Match the training distribution to the eval contract.** Training packs to
    32K; eval prompts are ~5K tokens. Retrain at the eval length distribution
    or report a length-matched ablation. The 2.6× output growth suggests the
@@ -570,14 +565,12 @@ teaches and therefore biases the tuning conclusion.**
 7. **A forced-continuation contamination probe across all arms.** Extend to
    all 26 held-out commits and all 4 arms (Qwen base, Qwen tuned, Super,
    Ultra), with the model *forced* to continue rather than allowed to answer
-   `UNKNOWN`. Report per-arm and aggregate. The current 5-case, 2-model,
-   2-of-5-on-CHANGELOG probe cannot support the "demonstrably unseen" phrasing
-   in `REPORT.md` §10.
+   `UNKNOWN`. The current 5-case, 2-model, 2-of-5-on-CHANGELOG probe cannot
+   support the "demonstrably unseen" phrasing in `REPORT.md` §10.
 8. **Report the full funnel as a results table**, not a pipeline description:
    every stage (565 → 525 → 460 → 353 → 182 → 148/34 → 26) with count,
    reason, and a measured difficulty proxy (patch bytes, file count, file
-   size). A reviewer should be able to see exactly which tasks were removed
-   and infer the bias.
+   size), so a reviewer can infer the bias.
 9. **Publish the excluded 8 held-out pairs as a second, harder tier.** We
    already have them. Scoring 26 easy + 8 hard (n = 34) is nearly free and
    gives a difficulty-conditional result: *does Ultra's advantage survive on
@@ -620,6 +613,9 @@ teaches and therefore biases the tuning conclusion.**
 
 ## 8. Things that are *not* limitations, stated so they are not re-litigated
 
+These objections are already answered with evidence; do not raise them as if
+unaddressed.
+
 - **"The harness might be broken."** The oracle scores the gold answer as
   solved through the identical parse→apply→run-tests→score path, 26/26. Two
   real defects were found and fixed this way (an 80-line block cap that
@@ -631,11 +627,11 @@ teaches and therefore biases the tuning conclusion.**
   15 hours), and 0/31 probe lines were reproduced. Narrow (§2.2), but not
   absent — and the split bug (483 train / 0 test) was found and fixed rather
   than shipped.
-- **"The scoring is subjective."** It is execution-only: patch applies, the
-  commit's own tests pass. No LLM judge, no similarity heuristic.
+- **"The scoring is subjective."** Execution-only: patch applies, the commit's
+  own tests pass. No LLM judge, no similarity heuristic.
 - **"The gold patches might be ambiguous or unplayable."** 24 such commits
-  were removed at corpus-build time rather than scored as model failures,
-  precisely so every arm would not be biased down by the same amount.
+  were removed at corpus-build time rather than scored as model failures, so
+  no arm is biased down by the same amount.
 
 ---
 
@@ -650,11 +646,11 @@ split, a genuine (if narrow) contamination probe. The **Ultra-vs-Qwen gap**
 The **measurement claims are much weaker than the pipeline deserves**, for
 reasons structural rather than fixable by more effort at this scale:
 
-- n = 26 gives a Wilson interval of [4.0%, 29.0%] on the 11.5% result and
-  power of 2.8% against a genuine lift to 30%. **We could not have detected
-  a real effect of the size that would have mattered.**
-- n = 1 repository, one language, one product domain, three months, one
-  author group. **No transfer claim is supportable.**
+- n = 26 gives a Wilson interval of [4.0%, 29.0%] and power of 2.8% against
+  a genuine lift to 30%. **We could not have detected a real effect of the
+  size that would have mattered.**
+- n = 1 repository, one language, one domain, three months, one author group.
+  **No transfer claim is supportable.**
 - The tuning result is a **null from a configuration too small to see an
   effect** (148 examples, 1 epoch, r = 16, attention-only, 1.1M tokens, with
   a 32K-packed training distribution that does not match a ~5K-token eval
@@ -662,14 +658,14 @@ reasons structural rather than fixable by more effort at this scale:
   The honest statement is "this configuration did not help and damaged
   contract discipline," not "fine-tuning on verified history does not help."
 - The benchmark measures **specification satisfaction with the specification
-  supplied** — a legitimate, precisely-claimable skill, but not the skill most
-  readers will assume it is.
+  supplied** — legitimate and precisely-claimable, but not the skill most
+  readers will assume.
 - One-shot scoring against NVIDIA's multi-turn agentic figures is **not a
   contradiction**, and presenting it as one would be the most damaging claim
   in the project.
 - Corpus survivorship from 3,526 commits to 26 evaluated tasks (**0.74%**) is
-  concentrated in filters that systematically remove large-file, multi-hunk
-  and repetitive-code edits. The surviving set is easier than the repo's real
+  concentrated in filters that remove large-file, multi-hunk and
+  repetitive-code edits. The surviving set is easier than the repo's real
   commit distribution — and it is the set that shaped what the fine-tune
   learned.
 
