@@ -1,0 +1,52 @@
+{
+  "sampled": 40,
+  "survived_strict": 36,
+  "survival_rate": 0.9,
+  "status_counts": {
+    "verified": 36,
+    "reject_no_transition": 2,
+    "reject_post_failed": 1,
+    "reject_flaky": 1
+  },
+  "mean_wall_s": 24.4,
+  "repeats": 2,
+  "seed": 7,
+  "failures": [
+    {
+      "sha": "b2771ebf69843e227e89ff5d70b91af4655116c8",
+      "status": "reject_no_transition",
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": []
+    },
+    {
+      "sha": "5fc7aee78187a71283be22577c3b977a88fb0916",
+      "status": "reject_post_failed",
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": []
+    },
+    {
+      "sha": "c616c8e78892bac658c338312414219828c4168b",
+      "status": "reject_no_transition",
+      "fail_to_pass": [],
+      "regressions": [],
+      "flaky": []
+    },
+    {
+      "sha": "3fd20599e8ee60150f0388655894905a066b0d7e",
+      "status": "reject_flaky",
+      "fail_to_pass": [
+        "tests.test_session_import_workspace_validation::test_session_import_rejects_blocked_root_workspace",
+        "tests.test_session_import_workspace_validation::test_session_import_rejects_non_path_workspace_value"
+      ],
+      "regressions": [],
+      "flaky": [
+        "tests.test_session_import_workspace_validation::test_imported_session_file_read_stays_under_validated_workspace",
+        "tests.test_session_import_workspace_validation::test_resolver_would_reject_imported_root_before_file_read",
+        "tests.test_session_import_workspace_validation::test_session_import_rejects_blocked_root_workspace",
+        "tests.test_session_import_workspace_validation::test_session_import_rejects_non_path_workspace_value"
+      ]
+    }
+  ]
+}

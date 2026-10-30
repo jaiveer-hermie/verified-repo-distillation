@@ -1,0 +1,56 @@
+gate verdicts: 565 | verified: 525
+verified with commit metadata: 525
+auditing 40 sampled commits, repeats=2
+
+[ 1/40] 081e600b verified               f2p= 6 p2p=  4 reg=0 flaky=0  14.0s
+[ 2/40] 2dfe765b verified               f2p= 6 p2p=  0 reg=0 flaky=0  14.6s
+[ 3/40] 6c343aff verified               f2p=19 p2p=  8 reg=0 flaky=0  14.8s
+[ 4/40] a9ce2889 verified               f2p= 3 p2p=  0 reg=0 flaky=0  15.6s
+[ 5/40] b14aae4e verified               f2p= 2 p2p=  0 reg=0 flaky=0  15.2s
+[ 6/40] 71d8a8fb verified               f2p= 4 p2p=  0 reg=0 flaky=0  15.0s
+[ 7/40] b2771ebf reject_no_transition   f2p= 0 p2p=  0 reg=0 flaky=0  11.9s
+[ 8/40] 67a20477 verified               f2p= 2 p2p=  0 reg=0 flaky=0  17.4s
+[ 9/40] efb7293a verified               f2p=37 p2p=  9 reg=0 flaky=0   9.7s
+[10/40] d8612ba3 verified               f2p= 1 p2p=  1 reg=0 flaky=0  13.5s
+[11/40] ecfa5806 verified               f2p= 8 p2p=  1 reg=0 flaky=0  16.4s
+[12/40] 5fc7aee7 reject_post_failed     f2p= 0 p2p=  0 reg=0 flaky=0  32.7s
+[13/40] 28b4777b verified               f2p= 2 p2p=  2 reg=0 flaky=0  10.1s
+[14/40] 9b628c27 verified               f2p= 3 p2p=  1 reg=0 flaky=0  10.2s
+[15/40] 4153a47d verified               f2p= 2 p2p=  6 reg=0 flaky=0  15.6s
+[16/40] b9bf00ef verified               f2p= 2 p2p=  0 reg=0 flaky=0  14.4s
+[17/40] ebb4dffc verified               f2p= 3 p2p=  2 reg=0 flaky=0  16.0s
+[18/40] 8f1f582c verified               f2p=13 p2p=  4 reg=0 flaky=0  11.9s
+[19/40] 618e1a5d verified               f2p= 1 p2p=  0 reg=0 flaky=0  17.7s
+[20/40] 48b82d57 verified               f2p= 4 p2p=  0 reg=0 flaky=0  14.2s
+[21/40] fbc023bb verified               f2p= 6 p2p=  0 reg=0 flaky=0  13.1s
+[22/40] 160cd03c verified               f2p= 6 p2p=  3 reg=0 flaky=0  15.7s
+[23/40] ad8e1030 verified               f2p=20 p2p=  0 reg=0 flaky=0  12.5s
+[24/40] c616c8e7 reject_no_transition   f2p= 0 p2p=  0 reg=0 flaky=0  13.4s
+[25/40] f704fb52 verified               f2p= 4 p2p=  0 reg=0 flaky=0  13.0s
+[26/40] 5b9484b8 verified               f2p= 1 p2p=  0 reg=0 flaky=0  17.5s
+[27/40] 2fdc1d99 verified               f2p= 3 p2p=  0 reg=0 flaky=0  16.1s
+[28/40] e9d7d5e4 verified               f2p= 6 p2p=  0 reg=0 flaky=0  25.2s
+[29/40] 11fd0d84 verified               f2p= 8 p2p=  0 reg=0 flaky=0  29.7s
+[30/40] ac66c909 verified               f2p= 7 p2p=  0 reg=0 flaky=0  40.5s
+[31/40] d45d4c08 verified               f2p= 9 p2p=  0 reg=0 flaky=0 143.4s
+[32/40] 8f4692b8 verified               f2p=11 p2p=  5 reg=0 flaky=0  47.3s
+[33/40] 3fd20599 reject_flaky           f2p= 2 p2p=  2 reg=0 flaky=4  82.6s
+[34/40] 8e65ad30 verified               f2p= 2 p2p=  0 reg=0 flaky=0  29.4s
+[35/40] d620f439 verified               f2p= 5 p2p=  1 reg=0 flaky=0  36.9s
+[36/40] 5d16ff75 verified               f2p= 5 p2p=  1 reg=0 flaky=0  15.4s
+[37/40] 6caf86ba verified               f2p=11 p2p=  0 reg=0 flaky=0  34.4s
+[38/40] 1f56fad7 verified               f2p=11 p2p=  0 reg=0 flaky=0  25.6s
+[39/40] 7999d1c7 verified               f2p=25 p2p=  1 reg=0 flaky=0  19.1s
+[40/40] 0db5bc6b verified               f2p= 7 p2p=  0 reg=0 flaky=0  43.6s
+
+==============================================================
+sampled              : 40
+survived strict gate : 36 (90.0%)
+  verified               36
+  reject_no_transition   2
+  reject_post_failed     1
+  reject_flaky           1
+mean wall per commit : 24.4s
+total audit time     : 976s
+report -> /home/jaiveer2507/projects/verified-repo-distillation/data/hermes-webui-all/audit_strict.json
+AUDIT_EXIT=0
