@@ -18,6 +18,27 @@ better than the same model with the repository retrieved into its context?
 
 ---
 
+## Headline results
+
+| what | number |
+|---|---|
+| gate yield (suite-level rule) | **525 / 565 verified (92.9%)** |
+| gate precision (40-commit strict audit) | **36 / 40 = 90.0%**, Wilson 95% CI [76.9, 96.0] |
+| false pairs caught by the strict rule | 4 (2 no named transition, 1 non-reproducing, 1 flaky — 4 tests flipping between identical runs) |
+| oracle (gold answer through the identical scorer) | **26 / 26 = 100%** |
+| contamination probe | **0 / 31** held-out lines reproduced |
+| Nemotron 3 Ultra 550B | **17 / 26 (65%)** |
+| Qwen3-30B-A3B base | **3 / 26 (11.5%)**, 4/26 with a repair loop |
+| Qwen3-30B-A3B + LoRA on 148 verified pairs | **3 / 26 (11.5%)** — no gain |
+
+The headline experiment is negative and reported as such: tuning on 148 verified
+pairs did not solve a single additional held-out commit and cut patch-application
+reliability from 84.6% to 38.5%. The gate, the audit, and the measurement
+apparatus are the contribution. See `GATE-AUDIT.md`, `LIMITATIONS.md` and
+`SCALING.md`.
+
+---
+
 ## The gate (the actual contribution)
 
 For each candidate commit `C` with parent `P`:

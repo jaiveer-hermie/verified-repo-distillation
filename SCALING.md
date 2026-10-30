@@ -119,8 +119,12 @@ cold-cache commit that spent 392 s downloading Go modules.
 | A (`data/coredns_gate2.log`) | 419.94 s | 12.55 s | 86.56 s | 173.0 s |
 | B (re-run, warm `~/.cache/vrd-go`) | 341.0 s | 45.7 s | 84.9 s | 157.2 s |
 
-Commit 1 in each run is the cold-cache commit. Its pre-arm log is dominated by
-`go: downloading github.com/go-openapi/...` lines — the module cache was empty.
+Commit 1 in each run is the cold-cache commit. Its pre-arm took 392.81 s and
+26.27 s respectively, against 5.73 s and 45.7 s for the warm commits, and its
+output tail is entirely `go: downloading github.com/go-openapi/...` lines — the
+module cache was empty. The 392 s is the **pre-arm total**, not the download
+time in isolation (downloads interleave with the test run); what is
+unambiguous is that the cold commit is 3–8× the warm commits.
 
 | population | n | mean | median |
 |---|---|---|---|
@@ -225,8 +229,10 @@ from the upstream source) lists **260** CNCF-governed projects with an
 
 The task brief says "~100 graduated projects". The authoritative upstream list
 says **39 graduated** and **38 incubating** = **77 non-sandbox projects**. I
-cloned and measured **76 of those 77** (one repo, `open-feature/spec`, has no
-commits on the default branch) as blobless bare clones and counted commits
+cloned and measured **76 of those 77** (the exception, `meshery/meshery`, is a
+large TypeScript monorepo whose clone did not finish in the time available; by
+GitHub's commit API it has ~60,700 commits, so excluding it is conservative for
+a TypeScript repo with no runner) as blobless bare clones and counted commits
 locally with the same git plumbing the pipeline uses:
 
 ```
